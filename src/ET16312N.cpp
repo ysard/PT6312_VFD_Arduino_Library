@@ -132,7 +132,7 @@ void VFD_setCursorPosition(uint8_t position, bool cmd){
 
     cursor = position;
 
-    // map position to memory (x bytes per digit)
+    // Map position to memory (x bytes per digit)
     position = (position * PT6312_BYTES_PER_GRID) - PT6312_BYTES_PER_GRID;
     // Address setting command: set an address of the display memory (0 to 15, 5 lowest bits)
     VFD_command(PT6312_ADDR_SET_CMD | (position & PT6312_ADDR_MSK), cmd);
