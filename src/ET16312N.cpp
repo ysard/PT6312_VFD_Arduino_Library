@@ -21,6 +21,10 @@
 #include "ET16312N.h"
 uint8_t cursor;
 
+
+/**
+ * @brief Configure the controller and the pins of the MCU.
+ */
 void VFD_initialize(void){
     // Configure pins
     pinMode(VFD_CS_DDR, VFD_CS_PIN, _OUTPUT);
@@ -69,6 +73,11 @@ void VFD_initialize(void){
 }
 
 
+/**
+ * @brief Set display brightness
+ * @param brightness Valid range 0..7
+ *      for 1/16, 2/16, 4/16, 10/16, 11/16, 12/16, 13/16, 14/16 dutycycles.
+ */
 void VFD_setBrightness(const uint8_t brightness){
     // Display control cmd, display on/off, brightness
     // mask invalid bits with PT6312_BRT_MSK
@@ -76,6 +85,9 @@ void VFD_setBrightness(const uint8_t brightness){
 }
 
 
+/**
+ * @brief Clear the display by turning off all segments
+ */
 void VFD_clear(void){
     // Set addr to 1st memory cell, no CS assertion
     VFD_setCursorPosition(1, false);
@@ -93,6 +105,20 @@ void VFD_clear(void){
 }
 
 
+/**
+ * @brief Set the grid address according to the number of chars per grid.
+ *      Should be used before sending segments data.
+ *      Ex: If PT6312_BYTES_PER_GRID == 2, positions 1 and 2 rely on the first grid,
+ *      the memory address will be 0.
+ * @param position Position where the next segments will be written.
+ *      Valid range 1..VFD_DIGITS.
+ *      If position == VFD_DIGITS + 1: The first grid will be selected.
+ *      If position > VFD_DIGITS + 1 or VFD_DIGITS == 0: The last grid will be selected.
+ * @param cmd (Optional) Boolean transmitted to VFD_command();
+ *      If True the CS/Strobe line is asserted to HIGH (end of transmission)
+ *      after setting the address.
+ *      Default: false
+ */
 void VFD_setCursorPosition(uint8_t position, bool cmd){
     if(position > VFD_DIGITS){
         if(position == VFD_DIGITS + 1){
@@ -147,7 +173,8 @@ void VFD_writeString(const char *string, bool colon_symbol){
             // MSB: 1st char
             VFD_command(chrset_tmp, false);
         }else{
-            // Cursor positions: 1 or 2
+            // Cursor positions: 1 or 2: 1 char only
+            // TODO: set only the LSB part to avoid erasing MSB part ?
             // Send LSB
             chrset = FONT[*string - 0x20][1];
             VFD_command(chrset, false);
@@ -164,7 +191,7 @@ void VFD_writeString(const char *string, bool colon_symbol){
 }
 
 
-// Enables VFDBusySpinningCircle function
+// VFD_busySpinningCircle global variables
 uint8_t busy_indicator_delay_count;
 uint8_t busy_indicator_frame;
 uint8_t busy_indicator_loop_nb;
@@ -285,6 +312,15 @@ void VFD_busySpinningCircle(void){
 }
 
 
+/**
+ * @brief Set status of LEDs.
+ *      Up to 4 LEDs can be controlled.
+ * @param leds Byte where the 4 least significant bits are used.
+ *      Set a bit to 1 to turn on a LED.
+ *      Bit 0: LED 1
+ *      ...
+ *      Bit 3: LED 4
+ */
 void VFD_setLEDs(uint8_t leds){
     uint8_t leds_value = 0xFF;
 
@@ -311,9 +347,9 @@ void VFD_setLEDs(uint8_t leds){
 
 /**
  * @brief Get status of keys
- *      Key status are stored in the 3 least significant bytes of a uint32_t.
+ *      Keys status are stored in the 3 least significant bytes of a uint32_t.
  *      Each of the 4 keys is sampled 6 times.
- *      In a sample, 4 bits for keys: 0, 1, 2, 3 (from least to most significant bit)
+ *      In a sample, 4 bits for keys: 0, 1, 2, 3 (from least to most significant bit).
  *      If a key is pressed raw_keys is > 0.
  *      Sample Masks:
  *          Sample 0: raw_keys & 0x0F
@@ -356,15 +392,16 @@ uint32_t VFD_getKeys(void){
 
 
 /**
- * @brief Return the number of the first pressed button (no multi buttons)
+ * @brief Get the number of the first pressed button (no multi buttons)
  *      Button 0: 1
  *      ...
  *      Button 3: 4
+ * @see VFD_getKeys()
  * @return The number of the first pressed button or 0 if no button is pressed.
  */
 uint8_t VFD_getKeyPressed(void){
     uint8_t btn_nr = 1, pressed_btn = 0;
-    // Get 1 sample (6th sample): Last 4 bits
+    // Get 1 sample (6th sample): Last 4 bits of the uint32_t
     pressed_btn = PT6312_KEY_SMPL_MSK & VFD_getKeys();
     if(pressed_btn > 0){
         // Return the button number
@@ -376,6 +413,14 @@ uint8_t VFD_getKeyPressed(void){
 }
 
 
+/**
+ * @brief Get status of switches
+ *      Switches status are stored in the last 4 bits of the returned byte.
+ *      The first (lowest) bit represents switch 0.
+ *      Ex: 0b....0001
+ *                   |
+ *                   switch 0 is pressed
+ */
 uint8_t VFD_getSwitches(void){
     // Enable Switch Read mode
     // Data set cmd, normal mode, auto incr, read data
@@ -410,8 +455,8 @@ uint8_t VFD_getSwitches(void){
  *      Each grid has 2 addresses: So 2 memory bytes.
  *
  *      The Least Significant Byte is received first, its bits are read from
- *      the lowest one to highest one (from right to left in the human representation
- *      0b00000000), so from 0th bit to 7th bit (8th segment).
+ *      the lowest one to highest one (from right to left in the common
+ *      human representation: 0b00000000), so from 0th bit to 7th bit (8th segment).
  *      Then, the Most Significant Byte is received
  *      for the definition of the 8th bit to the 15th bit (16th segment).
  */
@@ -444,7 +489,11 @@ void VFD_segmentsGenericTest(void){
 }
 
 
-void VFD_displayAllSegments(){
+/**
+ * @brief Test the display of all segments of the display.
+ *      It's the opposite of VFD_clear().
+ */
+void VFD_displayAllSegments(void){
     VFD_setCursorPosition(1, false);
     for(uint8_t grid=1; grid<=VFD_DIGITS; grid++){
         // Display a segment
@@ -457,6 +506,14 @@ void VFD_displayAllSegments(){
 }
 
 
+/**
+ * @brief Send a byte in a write command to the controller
+ * @param value Byte to send.
+ * @param cmd (Optional)
+ *      If True, the CS/Strobe line is asserted to HIGH (end of transmission)
+ *      after the byte has been sent.
+ *      Default: false
+ */
 void VFD_command(uint8_t value, bool cmd){
     digitalWrite(VFD_CS_PORT, VFD_CS_PIN, _LOW);
     _delay_us(1); // NOTE: not in datasheet
@@ -482,14 +539,22 @@ void VFD_command(uint8_t value, bool cmd){
 }
 
 
+/**
+ * @brief Signal the driver that the data transmission is over
+ *      The CS/Strobe line is asserted to HIGH (end of transmission).
+ */
 inline void VFD_CSSignal(){
-    // Signal the driver that the data transmission is over
     _delay_us(1);
     digitalWrite(VFD_CS_PORT, VFD_CS_PIN, _HIGH);
     _delay_us(1);
 }
 
 
+/**
+ * @brief Obtain a byte from the controller (i.e get keys & switches status)
+ * @see VFD_getSwitches(), VFD_getKeys(), VFD_getKeyPressed().
+ * @return Byte of data
+ */
 uint8_t VFD_readByte(void){
     uint8_t data_in = 0xFF;
     for(uint8_t i=0; i<8; i++){
@@ -509,6 +574,15 @@ uint8_t VFD_readByte(void){
 }
 
 
+/**
+ * @brief Write a specific byte at the given address in the controller memory.
+ *      This function doesn't use VFD_setCursorPosition() to map the position
+ *      to a grid.
+ * @warning Note that the CS/Strobe line is asserted to HIGH (end of transmission)
+ *      after the byte has been sent.
+ * @param address Value range 0x00..0x15 (22 addresses).
+ * @param data Byte to write at the given address.
+ */
 void VFD_writeByte(uint8_t address, char data){
     VFD_command(PT6312_ADDR_SET_CMD | (address & PT6312_ADDR_MSK), false);
     VFD_command(data, true);
