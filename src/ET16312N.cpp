@@ -208,6 +208,11 @@ uint8_t busy_indicator_delay_count;
 uint8_t busy_indicator_frame;
 uint8_t busy_indicator_loop_nb;
 
+/**
+ * @brief Reset counters of the spinning circle animation
+ * @warning Must be used before initiating an animation
+ * @see VFD_busySpinningCircle()
+ */
 void VFD_busySpinningCircleReset(void){
     busy_indicator_delay_count = 1;
     busy_indicator_frame = 1;
@@ -216,6 +221,9 @@ void VFD_busySpinningCircleReset(void){
 
 /**
  * @brief Animation for a busy spinning circle.
+ *
+ * @note
+ *      The animation takes place on the current position set by the value of cursor.
  *      The concerned segments for this display are localized on the grid 1.
  *      The segments are: 11, 12, 13, 14, 15, 16 (it's the MSB part of the grid).
  *
@@ -327,6 +335,7 @@ void VFD_busySpinningCircle(void){
     }
 
     // Reset/Update display
+    // => Don't know why but it appears to be mandatory to avoid forever black screen... (?)
     // Set display mode
     VFD_command(0x00, 1); // 4 digits, 16 segments
     // Turn on the display
