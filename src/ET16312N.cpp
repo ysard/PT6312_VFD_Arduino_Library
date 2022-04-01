@@ -336,22 +336,20 @@ void VFD_busySpinningCircle(void){
  *      Bit 3: LED 4
  */
 void VFD_setLEDs(uint8_t leds){
-    uint8_t leds_value = 0xFF;
-
     // Enable LED Read mode
     // Data set cmd, normal mode, auto incr, write data to LED port
     VFD_command(PT6312_DATA_SET_CMD | PT6312_MODE_NORM | PT6312_ADDR_INC | PT6312_LED_WR, false);
 
+    // Invert the bits:
     // 0: LED lights
     // 1: LED turns off
-    // Invert the bits
     for(uint8_t i=0; i<8; i++){
         if((1 << i) & leds)
             // Bit is set: Clear the bit
-            leds_value &= ~(1 << i);
+            leds &= ~(1 << i);
     }
 
-    VFD_command(leds_value & PT6312_LED_MSK, true);
+    VFD_command(leds & PT6312_LED_MSK, true);
 
     // Restore Data Write mode
     // Data set cmd, normal mode, auto incr, write data to memory
