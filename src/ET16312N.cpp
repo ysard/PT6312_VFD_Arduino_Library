@@ -139,6 +139,18 @@ void VFD_setCursorPosition(uint8_t position, bool cmd){
 }
 
 
+/**
+ * @brief Write a string of characters present in the font
+ * @param string String must be null terminated '\0'. Cursor is auto-incremented.
+ *          For this display 6 characters can be displayed simultaneously.
+ *          For positions 3 and 4, the grids accept 2 characters.
+ *          The grid 4 accept a special colon_symbol segment.
+ *          Positions 1 and 2 accept only 1 char (segments of LSB only).
+ * @param colon_symbol Boolean set to true to display the colon symbol on grid 4.
+ *          The symbol is displayed between chars 3 and 4.
+ * @todo TODO: fill the display buffer
+ * @todo TODO: take an icon mask for every char
+ */
 void VFD_writeString(const char *string, bool colon_symbol){
     // Display control command: Write data to display memory, increment addr, normal operation
     uint8_t chrset;
