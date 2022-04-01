@@ -445,7 +445,7 @@ uint8_t VFD_getSwitches(void){
     // Here: CS is still LOW, SCLK is still HIGH
     _delay_us(1);
 
-    uint8_t raw_switches = VFD_readByte();
+    uint8_t raw_switches = PT6312_SW_MSK & VFD_readByte();
 
     // DATA pin as OUTPUT
     pinMode(VFD_DATA_DDR, VFD_DATA_PIN, _OUTPUT);
