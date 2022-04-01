@@ -203,81 +203,95 @@ void VFD_busySpinningCircleReset(void){
 }
 
 /**
- * @brief VFD_busySpinningCircle
+ * @brief Animation for a busy spinning circle.
+ *      The concerned segments for this display are localized on the grid 1.
+ *      The segments are: 11, 12, 13, 14, 15, 16 (it's the MSB part of the grid).
  *
- *      _delay_ms should be set to have an accurate
+ *      The loops count is stored in busy_indicator_delay_count.
+ *      The screen is refreshed every 2 calls.
  *
- *     // NOTE: rafraichi toutes les 2 boucles (1 pr la première); busy_indicator_delay_count
-    // 1 frame est rafraichie 70 fois avant changement;
-    // 1 changement tous les 70 rafraichissements (140 appels): busy_indicator_loop_nr
-    // la frame revient à la frame 1 dès que busy_indicator_frame == 6
+ *      A same frame is refreshed 70 times before moving to the next.
+ *      So there is a frame change every 140 calls.
+ *      An entire loop is made in 840 calls (6 frames * 140 calls each).
+ *      It's up to you to adjust the total time of a loop to 1 second by setting up
+ *      a delay (_delay_ms()) after a call (should be ~1.17ms).
+ *      The number of refreshes for a frame is stored in busy_indicator_loop_nb.
+ *
+ *      A frame is composed of segments displayed at different duty cycles (1, 1/2, 1/5, 1/12)
+ *      to obtain a fading effect for the segments behind the main segment.
+ *      Ex: For 16th main segment:
+ *          15, 14, 13 are displayed, from the most marked to the darkest;
+            the others are not displayed (12, 11).
+ *
+ *
+ *      The frame number is stored in busy_indicator_frame (value range 1-6 (6 segments)).
+ *      The frame number goes back to 1 once 6 is exceeded.
  */
 void VFD_busySpinningCircle(void){
 
     uint8_t msb = 0;
-    // 1 display for a fading segment each x loops
+    // Init duty cycles divisors
     uint8_t seg2_duty_cycle = 2, seg3_duty_cycle = 5, seg4_duty_cycle = 12;
 
     if(busy_indicator_delay_count == 2){
-        seg2_duty_cycle = busy_indicator_loop_nb % seg2_duty_cycle;
-        seg3_duty_cycle = busy_indicator_loop_nb % seg3_duty_cycle;
-        seg4_duty_cycle = busy_indicator_loop_nb % seg4_duty_cycle;
+        // Compute duty cycles triggers
+        seg2_duty_cycle = busy_indicator_loop_nb % seg2_duty_cycle; // 1/2
+        seg3_duty_cycle = busy_indicator_loop_nb % seg3_duty_cycle; // 1/5
+        seg4_duty_cycle = busy_indicator_loop_nb % seg4_duty_cycle; // 1/12
 
-        // left shifts
-        // msb: segment -8 -1
-        // lsb: segment -1
-        // segments affichés à 100% du duty cycle de la frame:
+        // Left shifts notes from segment number to bit number:
+        // msb: segment number -8 -1
+        // lsb: segment number -1
+        // Segments successively displayed with 100% of the duty cycle of 1 frame:
         // 11, 12, 13, 14, 15, 16
-        // Les 3 segments qui précèdent le segment affiché sont en fading de plus en plus prononcé
-        // Ex: 16 affiché: 15, 14, 13 sont affichés, du plus marqué jusqu'au plus sombre ;
-        // les autres sont non affichés (12, 11)
+        // The 3 segments that precede the main displayed segment are fading more and more pronounced.
         if(busy_indicator_frame == 1){
-            msb = 1 << (11 - 8 - 1); // segment 11 (first) (1)
+            msb = 1 << (11 - 8 - 1); // segment 11 (first)
         }else if(busy_indicator_frame == 2){
-            msb = 1 << (12 - 8 - 1); // segment 12 (second) (1)
+            msb = 1 << (12 - 8 - 1); // segment 12 (second)
             if(seg2_duty_cycle == 0){
-                msb |= 1 << (11 - 8 - 1); // segment 11 (2)
+                msb |= 1 << (11 - 8 - 1); // segment 11
             }
         }else if(busy_indicator_frame == 3){
-            msb = 1 << (13 - 8 - 1); // segment 13 (third) (1)
+            msb = 1 << (13 - 8 - 1); // segment 13 (third)
             if(seg2_duty_cycle == 0){
-                msb |= 1 << (12 - 8 - 1); // segment 12 (2)
+                msb |= 1 << (12 - 8 - 1); // segment 12
             }
             if(seg3_duty_cycle == 0){
-                msb |= 1 << (11 - 8 - 1); // segment 11 (3)
+                msb |= 1 << (11 - 8 - 1); // segment 11
             }
         }else if(busy_indicator_frame == 4){
-            msb = 1 << (14 - 8 - 1); // segment 14 (fourth) (1)
+            msb = 1 << (14 - 8 - 1); // segment 14 (fourth)
             if(seg2_duty_cycle == 0){
-                msb |= 1 << (13 - 8 - 1); // segment 13 (2)
+                msb |= 1 << (13 - 8 - 1); // segment 13
             }
             if(seg3_duty_cycle == 0){
-                msb |= 1 << (12 - 8 - 1); // segment 12 (3)
+                msb |= 1 << (12 - 8 - 1); // segment 12
             }
             if(seg4_duty_cycle == 0){
-                msb |= 1 << (11 - 8 - 1); // segment 11 (4)
+                msb |= 1 << (11 - 8 - 1); // segment 11
             }
         }else if(busy_indicator_frame == 5){
-            msb = 1 << (15 - 8 - 1); // segment 15 (fifth) (1)
+            msb = 1 << (15 - 8 - 1); // segment 15 (fifth)
             if(seg2_duty_cycle == 0){
-                msb |= 1 << (14 - 8 - 1); // segment 14 (2)
+                msb |= 1 << (14 - 8 - 1); // segment 14
             }
             if(seg3_duty_cycle == 0){
-                msb |= 1 << (13 - 8 - 1); // segment 13 (3)
+                msb |= 1 << (13 - 8 - 1); // segment 13
             }
             if(seg4_duty_cycle == 0){
-                msb |= 1 << (12 - 8 - 1); // segment 12 (4)
+                msb |= 1 << (12 - 8 - 1); // segment 12
             }
         }else if(busy_indicator_frame == 6){
-            msb = 1 << (16 - 8 - 1); // segment 16 (sixth) (1)
+            msb = 1 << (16 - 8 - 1); // segment 16 (sixth)
             if(seg2_duty_cycle == 0){
-                msb |= 1 << (15 - 8 - 1); // segment 14 (2)
+                msb |= 1 << (15 - 8 - 1); // segment 14
             }
              if(seg3_duty_cycle == 0){
-                msb |= 1 << (14 - 8 - 1); // segment 15 (3)
+                msb |= 1 << (14 - 8 - 1); // segment 15
             }
             if(seg4_duty_cycle == 0){
-                msb |= 1 << (13 - 8 - 1); // segment 13 (4)
+                msb |= 1 << (13 - 8 - 1); // segment 13
             }
         }
 
@@ -291,7 +305,7 @@ void VFD_busySpinningCircle(void){
 
         VFD_writeByte(cursor, msb); // TODO: receive specific addr to write this byte in param ?
 
-        // If the spinning circle is on 2 bytes, lsb and msb should be sent.
+        // If the spinning circle was on 2 bytes, lsb and msb should be sent.
         // Ex:
         // VFD_command(lsb, false);
         // VFD_command(msb, false);
@@ -300,7 +314,7 @@ void VFD_busySpinningCircle(void){
         cursor++;
     }
 
-    // Update display
+    // Reset/Update display
     // Set display mode
     VFD_command(0x00, 1); // 4 digits, 16 segments
     // Turn on the display
