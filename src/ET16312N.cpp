@@ -152,13 +152,13 @@ void VFD_setCursorPosition(uint8_t position, bool cmd){
  * @todo TODO: take an icon mask for every char
  */
 void VFD_writeString(const char *string, bool colon_symbol){
-    // Display control command: Write data to display memory, increment addr, normal operation
     uint8_t chrset;
     uint8_t chrset_tmp;
 
     while(*string > '\0'){ // TODO: security test cursor <= VFD_DIGITS
 
         if (cursor == 3 || cursor == 4){
+            // Cursor positions: 3 or 4: 2 chars per grid
             // MSB: set LSB of left char
             chrset_tmp = FONT[*string - 0x20][1];
             string++;
@@ -170,7 +170,7 @@ void VFD_writeString(const char *string, bool colon_symbol){
                 chrset = 0;
             }
 
-            // Set optional colon symbol (if its bit is < 8)
+            // Set optional colon symbol
             if (colon_symbol && cursor == 4){
                 #if VFD_COLON_SYMBOL_BIT > 8
                 // Add the symbol on the MSB part of the byte
