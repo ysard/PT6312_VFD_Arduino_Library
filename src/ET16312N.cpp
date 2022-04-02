@@ -144,10 +144,10 @@ void VFD_setCursorPosition(uint8_t position, bool cmd){
  * @param string String must be null terminated '\0'. Cursor is auto-incremented.
  *          For this display 6 characters can be displayed simultaneously.
  *          For positions 3 and 4, the grids accept 2 characters.
- *          The grid 4 accept a special colon_symbol segment.
  *          Positions 1 and 2 accept only 1 char (segments of LSB only).
- * @param colon_symbol Boolean set to true to display the colon symbol on grid 4.
- *          The symbol is displayed between chars 3 and 4.
+ * @param colon_symbol Boolean set to true to display the special colon symbol
+ *          segment on grid 4.
+ *          The symbol is displayed between chars 4 and 5.
  * @todo TODO: fill the display buffer
  * @todo TODO: take an icon mask for every char
  */
