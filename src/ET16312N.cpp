@@ -39,21 +39,21 @@ void VFD_initialize(void){
 
     // Set display mode
     #if VFD_DIGITS == 4
-        VFD_command(0x00, 1); // 4 digits, 16 segments
+        VFD_command(PT6312_GR4_SEG16, 1);  // 4 digits, 16 segments
     #elif VFD_DIGITS == 5
-        VFD_command(0x01, 1); // 5 digits, 16 segments
+        VFD_command(PT6312_GR5_SEG16, 1);  // 5 digits, 16 segments
     #elif VFD_DIGITS == 6
-        VFD_command(0x02, 1); // 6 digits, 16 segments
+        VFD_command(PT6312_GR6_SEG16, 1);  // 6 digits, 16 segments
     #elif VFD_DIGITS == 7
-        VFD_command(0x03, 1); // 7 digits, 15 segments
+        VFD_command(PT6312_GR7_SEG15, 1);  // 7 digits, 15 segments
     #elif VFD_DIGITS == 8
-        VFD_command(0x04, 1); // 8 digits, 14 segments
+        VFD_command(PT6312_GR8_SEG14, 1);  // 8 digits, 14 segments
     #elif VFD_DIGITS == 9
-        VFD_command(0x05, 1); // 9 digits, 13 segments
+        VFD_command(PT6312_GR9_SEG13, 1);  // 9 digits, 13 segments
     #elif VFD_DIGITS == 10
-        VFD_command(0x06, 1); // 10 digits, 12 segments
+        VFD_command(PT6312_GR10_SEG12, 1); // 10 digits, 12 segments
     #elif VFD_DIGITS == 11
-        VFD_command(0x07, 1); // 11 digits, 11 segments
+        VFD_command(PT6312_GR11_SEG11, 1); // 11 digits, 11 segments
     #endif
 
     // Turn on the display
