@@ -133,22 +133,22 @@
 /**
  * Library handy macros
  */
-// Generic API
+// Generic shortcuts
 #define VFD_displayOn(BRIGHTNESS)    VFD_command(PT6312_DSP_CTRL_CMD | PT6312_DSP_ON | (BRIGHTNESS & PT6312_BRT_MSK), true)
 #define VFD_displayOff()             VFD_command(PT6312_DSP_CTRL_CMD | PT6312_BRT0, true)
 #define VFD_home()                   VFD_setCursorPosition(1, false)
 
-// Display functions
+// Shortcuts for write functions
 #define VFDWriteStringPosition(string, position) \
     {                                            \
         VFD_setCursorPosition(position);         \
         VFD_writeString(string);                 \
     }
 
-#define VFDWriteIntPosition(number, nrOfDigits, position, displayColonSymbol) \
-    {                                                                         \
-        VFD_setCursorPosition(position);                                      \
-        VFDWriteInt(number, nrOfDigits, displayColonSymbol);                  \
+#define VFDWriteIntPosition(number, digits_number, position, colon_symbol) \
+    {                                                                      \
+        VFD_setCursorPosition(position);                                   \
+        VFDWriteInt(number, digits_number, colon_symbol);                  \
     }
 
 
@@ -156,6 +156,7 @@
  * Global variables
  */
 extern uint8_t cursor;
+// VFD_busySpinningCircle global variables
 extern uint8_t busy_indicator_delay_count;
 extern uint8_t busy_indicator_frame;
 extern uint8_t busy_indicator_loop_nb;
@@ -199,7 +200,7 @@ uint8_t VFD_getSwitches(void);
  * Test functions
  */
 void VFD_segmentsGenericTest(void);
-void VFD_displayAllSegments();
+void VFD_displayAllSegments(void);
 
 /**
  * Low level API
