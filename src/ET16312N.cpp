@@ -168,6 +168,7 @@ void VFD_writeString(const char *string, bool colon_symbol){
                 lsb_byte = FONT[*string - 0x20][1];
             } else {
                 lsb_byte = 0;
+                string--; // Allow end of while loop
             }
 
             // Set optional colon symbol
