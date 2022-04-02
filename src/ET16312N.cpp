@@ -270,7 +270,7 @@ void VFD_writeInt(int32_t number, int8_t digits_number, bool colon_symbol){
     // WARNING: This code will cut the string from left (not from right like previous adjustments)
     // Ex: VFD_writeInt(-123456, 7, true); on a 6 digits display.
     // Will display: -23456 (The 1 is dropped here)
-    uint8_t remaining_space = DISPLAYABLE_DIGITS - cursor +1;
+    uint8_t remaining_space = VFD_DISPLAYABLE_DIGITS - cursor +1;
     uint8_t size = ((length > remaining_space) ? remaining_space : length);
     char string[size + 1] = ""; // +1 for null byte
 

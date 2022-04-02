@@ -41,7 +41,7 @@
 #define VFD_DATA_R_ONLY_PORT    PINB
 // VFD Display features
 #define VFD_DIGITS              4 // Number of grids
-#define DISPLAYABLE_DIGITS      6 // Number of characters that can be displayed simultaneously
+#define VFD_DISPLAYABLE_DIGITS  6 // Number of characters that can be displayed simultaneously
 // Library config
 #define ENABLE_ICON_BUFFER      1 // Enable functions and extra buffer to display icons (except spinning circle)
 
