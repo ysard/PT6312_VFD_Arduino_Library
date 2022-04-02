@@ -161,6 +161,7 @@ extern uint8_t busy_indicator_loop_nb;
  * Generic API
  */
 void VFD_initialize(void);
+void VFD_resetDisplay(void);
 void VFD_setBrightness(const uint8_t brightness);
 void VFD_clear(void);
 

@@ -37,6 +37,25 @@ void VFD_initialize(void){
     // Waiting for the VFD driver to startup
     _delay_ms(500);
 
+    // Configure the controller
+    VFD_resetDisplay();
+
+    #if ENABLE_MENU_INTERFACE_RELATED == 1
+        for(uint8_t i=0; i<VFD_DIGITS; i++){
+            displaybuffer[i] = ' ';
+        }
+    #endif
+
+    cursor = 1;
+}
+
+/**
+ * @brief Configure/reset the controller
+ *      - Set display mode (number of digits & segments);
+ *      - Turn on the display by setting the brightness
+ *      - Init default command mode (write to memory, auto increment the memory address)
+ */
+void VFD_resetDisplay(void){
     // Set display mode
     #if VFD_DIGITS == 4
         VFD_command(PT6312_GR4_SEG16, 1);  // 4 digits, 16 segments
@@ -62,16 +81,7 @@ void VFD_initialize(void){
 
     // Data set cmd, normal mode, auto incr, write data to memory
     VFD_command(PT6312_DATA_SET_CMD | PT6312_MODE_NORM | PT6312_ADDR_INC | PT6312_DATA_WR, true);
-
-    #if ENABLE_MENU_INTERFACE_RELATED == 1
-        for(uint8_t i=0; i<VFD_DIGITS; i++){
-            displaybuffer[i] = ' ';
-        }
-    #endif
-
-    cursor = 1;
 }
-
 
 /**
  * @brief Set display brightness
