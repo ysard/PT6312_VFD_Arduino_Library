@@ -319,12 +319,11 @@ void VFD_busySpinningCircleReset(void){
  *      The frame number goes back to 1 once 6 is exceeded.
  */
 void VFD_busySpinningCircle(void){
+    if(busy_indicator_delay_count == 0){
+        uint8_t msb = 0;
+        // Init duty cycles divisors
+        uint8_t seg2_duty_cycle = 2, seg3_duty_cycle = 5, seg4_duty_cycle = 12;
 
-    uint8_t msb = 0;
-    // Init duty cycles divisors
-    uint8_t seg2_duty_cycle = 2, seg3_duty_cycle = 5, seg4_duty_cycle = 12;
-
-    if(busy_indicator_delay_count == 2){
         // Compute duty cycles triggers
         seg2_duty_cycle = busy_indicator_loop_nb % seg2_duty_cycle; // 1/2
         seg3_duty_cycle = busy_indicator_loop_nb % seg3_duty_cycle; // 1/5
@@ -386,7 +385,7 @@ void VFD_busySpinningCircle(void){
             }
         }
 
-        busy_indicator_delay_count = 0;
+        busy_indicator_delay_count = 2;
         busy_indicator_loop_nb++;
         if(busy_indicator_loop_nb == 70){
             if(busy_indicator_frame == 6) busy_indicator_frame = 0;
@@ -403,18 +402,12 @@ void VFD_busySpinningCircle(void){
         // VFD_CSSignal();
 
         cursor++;
+
+        // Reset/Update display
+        // => Don't know why but it appears to be mandatory to avoid forever black screen... (?)
+        VFD_resetDisplay();
     }
-
-    // Reset/Update display
-    // => Don't know why but it appears to be mandatory to avoid forever black screen... (?)
-    // Set display mode
-    VFD_command(0x00, 1); // 4 digits, 16 segments
-    // Turn on the display
-    VFD_displayOn(PT6312_BRT_DEF);
-    // Data set cmd, normal mode, auto incr, write data to memory
-    VFD_command(PT6312_DATA_SET_CMD | PT6312_MODE_NORM | PT6312_ADDR_INC | PT6312_DATA_WR, true);
-
-    busy_indicator_delay_count++;
+    --busy_indicator_delay_count;
 }
 
 
