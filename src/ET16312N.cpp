@@ -203,6 +203,77 @@ void VFD_writeString(const char *string, bool colon_symbol){
 }
 
 
+/**
+ * @brief Write a number
+ * @param number Number to display. Can be negative.
+ * @param digits_number Number of reserved characters to represent the given number.
+ *      If the number is negative, the minus sign '-' will be counted in the digits_number;
+ *      thus the digit_number is always respected.
+ *      If the number representation uses more space than digits_number,
+ *      it will be divided by 10 until it fits in the reserved space.
+ *      If the number representation uses less space than digits_number,
+ *      it will be padded with zeros.
+ * @param colon_symbol Boolean set to true to display the special colon symbol
+ *      segment if possible (See VFD_writeString()).
+ */
+void VFD_writeInt(int32_t number, int8_t digits_number, bool colon_symbol){
+    int16_t number_temp = number;
+    uint8_t length = 0;
+    bool isNegative = false;
+
+    // Find number of digits
+    // TODO: no check of uint8 overflow here or later (by adding minus sign)
+    while(number_temp != 0){
+        length++;
+        number_temp /= 10;
+    }
+
+    // Reserve 1 space for the sign
+    // Note: If we don't want to count the sign in the digits_number restriction
+    //  move this block after the next block of length adjustments.
+    if (number < 0){
+        // Switch to positive number
+        number = -number;
+        length++;
+        isNegative = true;
+    }
+
+    // Adjust the number to digits_number param
+    if (length < digits_number)
+        // Add remaining wanted space (filled later by zeros)
+        length += digits_number - length;
+    else if (length > digits_number) {
+        // Reduce the size of the number by discarding units
+        // Ex: 100 to 1 digit: 2 divisions by 10 are made
+        for (uint8_t i=0; i<(length-digits_number); i++)
+            number /= 10;
+        length = digits_number;
+    }
+
+    // Avoid a memory overflow if digit is too long
+    // (since VFD_writeString doesn't control the size)
+    // WARNING: This code will cut the string from left (not from right like previous adjustments)
+    // Ex: VFD_writeInt(-123456, 7, true); on a 6 digits display.
+    // Will display: -23456 (The 1 is dropped here)
+    uint8_t remaining_space = DISPLAYABLE_DIGITS - cursor +1;
+    uint8_t size = ((length > remaining_space) ? remaining_space : length);
+    char string[size + 1] = ""; // +1 for null byte
+
+    if (isNegative)
+        string[0] = '-';
+
+    for(uint8_t i=size-1; i>=(isNegative) ? 1 : 0; --i){
+        // Convert number to ASCII value
+        // PS: even if the modulo is 0, the displayed number will be 0
+        // => takes care of the digits_number param.
+        string[i] = (number % 10) + 0x30;
+        number /= 10;
+    }
+
+    VFD_writeString(string, colon_symbol);
+}
+
+
 // VFD_busySpinningCircle global variables
 uint8_t busy_indicator_delay_count;
 uint8_t busy_indicator_frame;
