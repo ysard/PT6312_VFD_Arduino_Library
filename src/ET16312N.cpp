@@ -152,48 +152,46 @@ void VFD_setCursorPosition(uint8_t position, bool cmd){
  * @todo TODO: take an icon mask for every char
  */
 void VFD_writeString(const char *string, bool colon_symbol){
-    uint8_t chrset;
-    uint8_t chrset_tmp;
+    uint8_t lsb_byte;
+    uint8_t msb_byte;
 
-    while(*string > '\0'){ // TODO: security test cursor <= VFD_DIGITS
+    while(*string > '\0'){ // TODO: security test cursor <= VFD_DIGITS//DISPLAYABLE
 
         if (cursor == 3 || cursor == 4){
             // Cursor positions: 3 or 4: 2 chars per grid
-            // MSB: set LSB of left char
-            chrset_tmp = FONT[*string - 0x20][1];
+            // MSB: Get LSB of left/1st char
+            msb_byte = FONT[*string - 0x20][1];
             string++;
-            // test string char validity
+            // Test char validity
             if (*string > '\0'){
-                // LSB: Send LSB of right char
-                chrset = FONT[*string - 0x20][1];
+                // LSB: Get LSB of right/2nd char
+                lsb_byte = FONT[*string - 0x20][1];
             } else {
-                chrset = 0;
+                lsb_byte = 0;
             }
 
             // Set optional colon symbol
             if (colon_symbol && cursor == 4){
                 #if VFD_COLON_SYMBOL_BIT > 8
-                // Add the symbol on the MSB part of the byte
-                chrset_tmp |= 1 << (VFD_COLON_SYMBOL_BIT - 9);
+                // Add the symbol on the MSB part of the grid
+                msb_byte |= 1 << (VFD_COLON_SYMBOL_BIT - 9);
                 #else // < 9
-                // Add the symbol on the LSB part of the byte
-                chrset |= 1 << (VFD_COLON_SYMBOL_BIT - 1);
+                // Add the symbol on the LSB part of the grid
+                lsb_byte |= 1 << (VFD_COLON_SYMBOL_BIT - 1);
                 #endif
             }
-            // LSB: 2nd char
-            VFD_command(chrset, false);
-            // MSB: 1st char
-            VFD_command(chrset_tmp, false);
         }else{
             // Cursor positions: 1 or 2: 1 char only
             // TODO: set only the LSB part to avoid erasing MSB part ?
             // Send LSB
-            chrset = FONT[*string - 0x20][1];
-            VFD_command(chrset, false);
+            lsb_byte = FONT[*string - 0x20][1];
             // Send MSB
-            chrset = FONT[*string - 0x20][0];
-            VFD_command(chrset, false);
+            msb_byte = FONT[*string - 0x20][0];
         }
+
+        VFD_command(lsb_byte, false);
+        VFD_command(msb_byte, false);
+
         cursor++;
         string++;
     }
@@ -285,10 +283,11 @@ uint8_t busy_indicator_loop_nb;
  * @see VFD_busySpinningCircle()
  */
 void VFD_busySpinningCircleReset(void){
-    busy_indicator_delay_count = 1;
+    busy_indicator_delay_count = 0;
     busy_indicator_frame = 1;
     busy_indicator_loop_nb = 0;
 }
+
 
 /**
  * @brief Animation for a busy spinning circle.
