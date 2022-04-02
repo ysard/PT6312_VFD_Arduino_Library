@@ -709,7 +709,15 @@ void VFD_writeByte(uint8_t address, char data){
 
 #if ENABLE_ICON_BUFFER == 1
 char iconDisplayBuffer[PT6312_MAX_NR_GRIDS * PT6312_BYTES_PER_GRID] = {0};
-void setIcon(uint8_t icon_font_index){
+
+/**
+ * @brief Add an icon to the buffer.
+ *      The icon will be displayed on the next call to VFD_writeString(), VFD_writeInt()
+ *      or VFD_busySpinningCircle();
+ * @param icon_font_index Index of the icon in the ICONS_FONT array.
+ *      Defines can be used.
+ */
+void VFD_setIcon(uint8_t icon_font_index){
     // Get memory address from grid
     // Grid obtained starts from 0
     // Ex: for grid=1: (1+1)*2-2 = 2
@@ -727,7 +735,15 @@ void setIcon(uint8_t icon_font_index){
     }
 }
 
-void clearIcon(uint8_t icon_font_index){
+
+/**
+ * @brief Remove an icon from the buffer.
+ *      The icon will be removed on the next call to VFD_writeString(), VFD_writeInt()
+ *      or VFD_busySpinningCircle();
+ * @param icon_font_index Index of the icon in the ICONS_FONT array.
+ *      Defines can be used.
+ */
+void VFD_clearIcon(uint8_t icon_font_index){
     // Get memory address from grid
     // Grid obtained starts from 0
     // Ex: for grid=1: (1+1)*2-2 = 2
@@ -745,12 +761,24 @@ void clearIcon(uint8_t icon_font_index){
     }
 }
 
-void clearIcons(){
+/**
+ * @brief Clear the icon buffer.
+ *      All the icons will be removed on the next call to VFD_writeString(), VFD_writeInt()
+ *      or VFD_busySpinningCircle();
+ */
+void VFD_clearIcons(){
     for(uint8_t i=0; i<(PT6312_MAX_NR_GRIDS * PT6312_BYTES_PER_GRID); i++){
         iconDisplayBuffer[i] = 0;
     }
 }
 
+
+/**
+ * @brief Convert grid number to a memory address
+ * @param grid Grid number (starting from 0)
+ * @return Address of the memory cell in the icon buffer
+ *      (or in the memory of the controller).
+ */
 inline uint8_t convertGridToMemoryAddress(uint8_t grid) {
     return ((grid + 1) * PT6312_BYTES_PER_GRID) - PT6312_BYTES_PER_GRID;
 }

@@ -180,9 +180,9 @@ void VFD_busySpinningCircle(void); // Adapted if ENABLE_ICON_BUFFER is set
 
 #if ENABLE_ICON_BUFFER == 1
 extern char iconDisplayBuffer[PT6312_MAX_NR_GRIDS * PT6312_BYTES_PER_GRID];
-void setIcon(uint8_t icon_font_index);
-void clearIcon(uint8_t icon_font_index);
-void clearIcons();
+void VFD_setIcon(uint8_t icon_font_index);
+void VFD_clearIcon(uint8_t icon_font_index);
+void VFD_clearIcons();
 inline uint8_t convertGridToMemoryAddress(uint8_t grid);
 #endif
 
