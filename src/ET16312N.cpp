@@ -1,7 +1,7 @@
 /* Arduino Library for AD16312, HT16512, PT6312, etc. VFD Controller.
- * Copyright (C) <2022> - <ysard@users.noreply.github.com>
+ * Copyright (C) 2022 Ysard - <ysard@users.noreply.github.com>
  *
- * Based on the work of <2007> Istrate Liviu - <istrateliviu24@yahoo.com>
+ * Based on the work of 2017 Istrate Liviu - <istrateliviu24@yahoo.com>
  * Itself inspired by http://www.instructables.com/id/A-DVD-Player-Hack/
  * Also inspired from https://os.mbed.com/users/wim/code/mbed_PT6312/
  *
