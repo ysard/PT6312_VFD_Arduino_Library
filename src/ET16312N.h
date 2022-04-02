@@ -40,7 +40,10 @@
 #define VFD_DATA_PIN            PB2
 #define VFD_DATA_R_ONLY_PORT    PINB
 // VFD Display features
-#define VFD_DIGITS              4       // Number of grids
+#define VFD_DIGITS              4 // Number of grids
+#define DISPLAYABLE_DIGITS      6 // Number of characters that can be displayed simultaneously
+// Library config
+#define ENABLE_ICON_BUFFER      1 // Enable functions and extra buffer to display icons (except spinning circle)
 
 /**
  * AVR macros
@@ -169,10 +172,20 @@ void VFD_clear(void);
  * Display functions
  */
 void VFD_setCursorPosition(uint8_t position, bool cmd=false);
-void VFD_writeString(const char *string);
-void VFD_writeString(const char *string, bool colon_symbol);
+void VFD_writeString(const char *string);                   // Adapted if ENABLE_ICON_BUFFER is set
+void VFD_writeString(const char *string, bool colon_symbol);// Adapted if ENABLE_ICON_BUFFER is set
+void VFD_writeInt(int32_t number, int8_t digits_number, bool colon_symbol);
 void VFD_busySpinningCircleReset(void);
-void VFD_busySpinningCircle(void);
+void VFD_busySpinningCircle(void); // Adapted if ENABLE_ICON_BUFFER is set
+
+#if ENABLE_ICON_BUFFER == 1
+extern char iconDisplayBuffer[PT6312_MAX_NR_GRIDS * PT6312_BYTES_PER_GRID];
+void setIcon(uint8_t icon_font_index);
+void clearIcon(uint8_t icon_font_index);
+void clearIcons();
+inline uint8_t convertGridToMemoryAddress(uint8_t grid);
+#endif
+
 
 /**
  * Keys, switches and LEDs

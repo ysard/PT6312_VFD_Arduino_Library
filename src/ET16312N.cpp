@@ -200,8 +200,14 @@ void VFD_writeString(const char *string, bool colon_symbol){
             msb_byte = FONT[*string - 0x20][0];
         }
 
+        #if ENABLE_ICON_BUFFER == 1
+        uint8_t memory_addr = (cursor * PT6312_BYTES_PER_GRID) - PT6312_BYTES_PER_GRID;
+        VFD_command(lsb_byte | iconDisplayBuffer[memory_addr], false);
+        VFD_command(msb_byte | iconDisplayBuffer[memory_addr + 1], false);
+        #else
         VFD_command(lsb_byte, false);
         VFD_command(msb_byte, false);
+        #endif
 
         cursor++;
         string++;
@@ -403,7 +409,11 @@ void VFD_busySpinningCircle(void){
             busy_indicator_loop_nb = 0;
         }
 
+        #if ENABLE_ICON_BUFFER == 1
+        VFD_writeByte(cursor, msb | iconDisplayBuffer[cursor]);
+        #else
         VFD_writeByte(cursor, msb); // TODO: receive specific addr to write this byte in param ?
+        #endif
 
         // If the spinning circle was on 2 bytes, lsb and msb should be sent.
         // Ex:
@@ -696,3 +706,52 @@ void VFD_writeByte(uint8_t address, char data){
     cursor++;
 }
 
+
+#if ENABLE_ICON_BUFFER == 1
+char iconDisplayBuffer[PT6312_MAX_NR_GRIDS * PT6312_BYTES_PER_GRID] = {0};
+void setIcon(uint8_t icon_font_index){
+    // Get memory address from grid
+    // Grid obtained starts from 0
+    // Ex: for grid=1: (1+1)*2-2 = 2
+    uint8_t addr = convertGridToMemoryAddress(ICONS_FONT[icon_font_index] & 0x0F);
+    uint8_t segment = ICONS_FONT[icon_font_index] >> 4;
+
+    // Address in iconDisplayBuffer is depends on the localization of the segment
+    // (LSB or MSB)
+    if (segment < 8) {
+        // LSB
+        iconDisplayBuffer[addr] |= 1 << segment;
+    } else { // > 7
+        // MSB
+        iconDisplayBuffer[addr + 1] |= 1 << (segment - 8);
+    }
+}
+
+void clearIcon(uint8_t icon_font_index){
+    // Get memory address from grid
+    // Grid obtained starts from 0
+    // Ex: for grid=1: (1+1)*2-2 = 2
+    uint8_t addr = convertGridToMemoryAddress(ICONS_FONT[icon_font_index] & 0x0F);
+    uint8_t segment = ICONS_FONT[icon_font_index] >> 4;
+
+    // Address in iconDisplayBuffer is depends on the localization of the segment
+    // (LSB or MSB)
+    if (segment < 8) {
+        // LSB
+        iconDisplayBuffer[addr] |= ~(1 << segment);
+    } else { // > 7
+        // MSB
+        iconDisplayBuffer[addr + 1] |= ~(1 << (segment - 8));
+    }
+}
+
+void clearIcons(){
+    for(uint8_t i=0; i<(PT6312_MAX_NR_GRIDS * PT6312_BYTES_PER_GRID); i++){
+        iconDisplayBuffer[i] = 0;
+    }
+}
+
+inline uint8_t convertGridToMemoryAddress(uint8_t grid) {
+    return ((grid + 1) * PT6312_BYTES_PER_GRID) - PT6312_BYTES_PER_GRID;
+}
+#endif
