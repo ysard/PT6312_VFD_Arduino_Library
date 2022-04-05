@@ -491,9 +491,9 @@ uint32_t VFD_getKeys(void){
 
     // Read the key matrix of size PT6312_KEY_MEM bytes
     // 3 bytes = 3 readings
-    uint32_t raw_keys = VFD_readByte();
-    raw_keys = (raw_keys << 8) + VFD_readByte();
-    raw_keys = (raw_keys << 8) + VFD_readByte();
+    uint32_t raw_keys = PT6312_KEY_MSK & VFD_readByte();
+    raw_keys = (raw_keys << 8) + PT6312_KEY_MSK & VFD_readByte();
+    raw_keys = (raw_keys << 8) + PT6312_KEY_MSK & VFD_readByte();
 
     // Restore DATA pin as OUTPUT
     pinMode(VFD_DATA_DDR, VFD_DATA_PIN, _OUTPUT);
@@ -519,7 +519,7 @@ uint32_t VFD_getKeys(void){
 uint8_t VFD_getKeyPressed(void){
     uint8_t btn_nr = 1, pressed_btn = 0;
     // Get 1 sample (6th sample): Last 4 bits of the uint32_t
-    pressed_btn = PT6312_KEY_SMPL_MSK & VFD_getKeys();
+    pressed_btn = PT6312_KEY_SMPL_MSK & PT6312_KEY_MSK & VFD_getKeys();
     if(pressed_btn > 0){
         // Return the button number
         while(((1 << btn_nr) & pressed_btn) == 0)

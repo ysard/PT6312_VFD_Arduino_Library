@@ -94,6 +94,13 @@
 #define PT6312_MODE_NORM         0x00
 #define PT6312_MODE_TEST         0x08
 
+//Key settings data
+// In some configurations, you may want to always discard
+// the bit of a key press retrieved from the controller.
+// See VFD_getKeys() for the structure of byte filtered by this mask.
+// By default all bits are kept.
+#define PT6312_KEY_MSK           0xFF
+
 //LED settings data
 #define PT6312_LED_MSK           0x0F
 #define PT6312_LED1              0x01
