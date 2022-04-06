@@ -491,8 +491,8 @@ uint32_t VFD_getKeys(void){
     // Read the key matrix of size PT6312_KEY_MEM bytes
     // 3 bytes = 3 readings
     uint32_t raw_keys = PT6312_KEY_MSK & VFD_readByte();
-    raw_keys = (raw_keys << 8) + PT6312_KEY_MSK & VFD_readByte();
-    raw_keys = (raw_keys << 8) + PT6312_KEY_MSK & VFD_readByte();
+    raw_keys = (raw_keys << 8) + (PT6312_KEY_MSK & VFD_readByte());
+    raw_keys = (raw_keys << 8) + (PT6312_KEY_MSK & VFD_readByte());
 
     // Restore DATA pin as OUTPUT
     pinMode(VFD_DATA_DDR, VFD_DATA_PIN, _OUTPUT);
