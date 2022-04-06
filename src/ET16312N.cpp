@@ -624,6 +624,25 @@ void VFD_displayAllSegments(void){
 
 
 /**
+ * @brief Display and scroll all available characters in the current font
+ */
+void VFD_displayAllFontGlyphes(void){
+    uint8_t i, j=0;
+    const uint8_t arrayLength = ((sizeof(FONT) / sizeof(uint8_t)) / 2);
+    char string[arrayLength + 1] = "";
+
+    for(i=0; i<arrayLength; i++){
+        // Do not display N/A chars
+        if((FONT[i][0] | FONT[i][1]) > 0){
+            string[j] = i + 0x20;
+            j++;
+        }
+    }
+    VFD_scrollText(string);
+}
+
+
+/**
  * @brief Send a byte in a write command to the controller
  * @param value Byte to send.
  * @param cmd (Optional)

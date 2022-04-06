@@ -208,6 +208,7 @@ uint8_t VFD_getSwitches(void);
  */
 void VFD_segmentsGenericTest(void);
 void VFD_displayAllSegments(void);
+void VFD_displayAllFontGlyphes(void);
 
 /**
  * Low level API
