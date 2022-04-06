@@ -308,7 +308,6 @@ void VFD_busySpinningCircleReset(void){
 
 /**
  * @brief Animation for a busy spinning circle.
- *
  * @note
  *      The animation takes place on the current position set by the value of cursor.
  *      The concerned segments for this display are localized on the grid 1.
@@ -328,7 +327,7 @@ void VFD_busySpinningCircleReset(void){
  *      to obtain a fading effect for the segments behind the main segment.
  *      Ex: For 16th main segment:
  *          15, 14, 13 are displayed, from the most marked to the darkest;
-            the others are not displayed (12, 11).
+ *          the others are not displayed (12, 11).
  *
  *
  *      The frame number is stored in busy_indicator_frame (value range 1-6 (6 segments)).
@@ -567,6 +566,9 @@ uint8_t VFD_getSwitches(void){
 
 /**
  * @brief Test segment numbering
+ *      Lights up a segment from 1st to 16th every 2 seconds so you can
+ *      note the VFD structure.
+ * @note
  *      To display a segment:
  *      The memory is filled progressively as the data is received.
  *      Each grid has 2 addresses: So 2 memory bytes.
@@ -779,6 +781,7 @@ void VFD_clearIcon(uint8_t icon_font_index){
         iconDisplayBuffer[addr + 1] |= ~(1 << (segment - 8));
     }
 }
+
 
 /**
  * @brief Clear the icon buffer.
