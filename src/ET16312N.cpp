@@ -431,6 +431,70 @@ void VFD_busySpinningCircle(void){
 
 
 /**
+ * @brief Scroll the given string on the display
+ *      The speed can be adjusted by modifying VFD_SCROLL_SPEED define.
+ * @param string String to display; must be null terminated '\0'.
+ * @param pfunc (Optional) Callback called at the end of each scrolling iteration.
+ *      It avoids blocking the program during the display loop.
+ *      Can be used to test keys, set leds, etc.
+ */
+void VFD_scrollText(const char *string, void (pfunc)()){
+    // Save the current cursor to start the scrolling on the same position at each iteration
+    uint8_t cursor_save = cursor;
+
+    // Find the input string length
+    // Save the addr of the string
+    const char *string_start_pos = string;
+    uint8_t size = 0;
+    while(*string > '\0'){
+        size++;
+        string++;
+    }
+    // Restore the pointer to the input string
+    string = string_start_pos;
+
+    // Split the string into segments of the number of displayable characters,
+    // then shift one letter at each iteration
+    char string_temp[VFD_DISPLAYABLE_DIGITS + 1] = "";
+    uint8_t left_shift = 0;
+    while((left_shift + VFD_DISPLAYABLE_DIGITS -1) < size) {
+        // Copy the segment from original string to a temporary string
+        uint8_t temp_index = 0;
+        for(uint8_t i=left_shift; i<(left_shift + VFD_DISPLAYABLE_DIGITS); i++){
+            string_temp[temp_index] = string[i];
+            temp_index++;
+        }
+        string_temp[temp_index] = '\0';
+
+        // Send the string to the controller
+        VFD_writeString(string_temp, false);
+
+        // Reset/Update display
+        // => Don't know why but it appears to be mandatory to avoid forever black screen... (?)
+        // See VFD_busySpinningCircle() (same behavior)
+        VFD_resetDisplay();
+
+        if (left_shift == 0)
+             _delay_ms(1000);
+        else
+             _delay_ms(VFD_SCROLL_SPEED);
+
+        left_shift++;
+
+        if (pfunc != nullptr){
+            pfunc();
+        }
+
+        // Restore grid cursor
+        // not on last iteration // todo PROPRE
+        if ((left_shift + VFD_DISPLAYABLE_DIGITS -1) < size)
+            VFD_setCursorPosition(cursor_save, false);
+    }
+    _delay_ms(2000);
+}
+
+
+/**
  * @brief Set status of LEDs.
  *      Up to 4 LEDs can be controlled.
  * @param leds Byte where the 4 least significant bits are used.

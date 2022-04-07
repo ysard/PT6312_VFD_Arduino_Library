@@ -185,6 +185,7 @@ void VFD_writeString(const char *string, bool colon_symbol);// Adapted if ENABLE
 void VFD_writeInt(int32_t number, int8_t digits_number, bool colon_symbol);
 void VFD_busySpinningCircleReset(void);
 void VFD_busySpinningCircle(void); // Adapted if ENABLE_ICON_BUFFER is set
+void VFD_scrollText(const char *string, void (pfunc)()=nullptr);
 
 #if ENABLE_ICON_BUFFER == 1
 extern char iconDisplayBuffer[PT6312_MAX_NR_GRIDS * PT6312_BYTES_PER_GRID];
