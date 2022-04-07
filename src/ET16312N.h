@@ -38,21 +38,21 @@
 /**
  * Driver constants
  */
-//PT6312 Display and Keymatrix data
+// PT6312 Display and Keymatrix data
 #define PT6312_MAX_NR_GRIDS      VFD_DIGITS
 #define PT6312_BYTES_PER_GRID    2
-//Significant bits Keymatrix data
+// Significant bits Keymatrix data
 #define PT6312_KEY_MSK           0xFF
 #define PT6312_KEY_SMPL_MSK      0x0F
 
-//Memory size in bytes for Display and Keymatrix
+// Memory size in bytes for Display and Keymatrix
 #define PT6312_DISPLAY_MEM       (PT6312_MAX_NR_GRIDS * PT6312_BYTES_PER_GRID)
 #define PT6312_KEY_MEM           3
 
-//Reserved bits for commands
+// Reserved bits for commands
 #define PT6312_CMD_MSK           0xE0
 
-//Mode setting command
+// Mode setting command
 #define PT6312_MODE_SET_CMD      0x00
 #define PT6312_GR4_SEG16         0x00
 #define PT6312_GR5_SEG16         0x01
@@ -63,7 +63,7 @@
 #define PT6312_GR10_SEG12        0x06
 #define PT6312_GR11_SEG11        0x07
 
-//Data setting commands
+// Data setting commands
 #define PT6312_DATA_SET_CMD      0x40
 #define PT6312_DATA_WR           0x00
 #define PT6312_LED_WR            0x01
@@ -74,32 +74,32 @@
 #define PT6312_MODE_NORM         0x00
 #define PT6312_MODE_TEST         0x08
 
-//Key settings data
+// Key settings data
 // In some configurations, you may want to always discard
 // the bit of a key press retrieved from the controller.
 // See VFD_getKeys() for the structure of byte filtered by this mask.
 // By default all bits are kept.
 #define PT6312_KEY_MSK           0xFF
 
-//LED settings data
+// LED settings data
 #define PT6312_LED_MSK           0x0F
 #define PT6312_LED1              0x01
 #define PT6312_LED2              0x02
 #define PT6312_LED3              0x04
 #define PT6312_LED4              0x08
 
-//Switch settings data
+// Switch settings data
 #define PT6312_SW_MSK            0x0F
 #define PT6312_SW1               0x01
 #define PT6312_SW2               0x02
 #define PT6312_SW3               0x04
 #define PT6312_SW4               0x08
 
-//Address setting commands
+// Address setting commands
 #define PT6312_ADDR_SET_CMD      0xC0
 #define PT6312_ADDR_MSK          0x1F
 
-//Display control commands
+// Display control commands
 #define PT6312_DSP_CTRL_CMD      0x80
 #define PT6312_BRT_MSK           0x07
 #define PT6312_BRT0              0x00 //Pulsewidth 1/16
@@ -138,7 +138,6 @@
         VFD_writeInt(number, digits_number, colon_symbol);                  \
     }
 
-
 /**
  * Global variables
  */
@@ -174,7 +173,6 @@ void VFD_clearIcon(uint8_t icon_font_index);
 void VFD_clearIcons();
 inline uint8_t convertGridToMemoryAddress(uint8_t grid);
 #endif
-
 
 /**
  * Keys, switches and LEDs
