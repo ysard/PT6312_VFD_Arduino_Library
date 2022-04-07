@@ -686,6 +686,11 @@ void VFD_displayAllSegments(void){
     VFD_CSSignal();
 
     cursor = VFD_DIGITS;
+
+    // Reset/Update display
+    // => Don't know why but it appears to be mandatory to avoid forever black screen... (?)
+    // See VFD_busySpinningCircle() (same behavior)
+    VFD_resetDisplay();
 }
 
 
