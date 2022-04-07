@@ -120,10 +120,12 @@ void VFD_clear(void){
 
 
 /**
- * @brief Set the grid address according to the number of chars per grid.
- *      Should be used before sending segments data.
- *      Ex: If PT6312_BYTES_PER_GRID == 2, positions 1 and 2 rely on the first grid,
- *      the memory address will be 0.
+ * @brief Set the cursor on the controller memory according to the given grid position.
+ *      The first address of a grid will be selected for writing.
+ *      Should be used BEFORE sending segments data.
+ *      Ex: If PT6312_BYTES_PER_GRID == 2 (default), position 1 relies on the first grid,
+ *      the memory address on the controller will be 0.
+ *      Position 2 relies on the 2nd grid, the address will be 2 (2 bytes further).
  * @param position Position where the next segments will be written.
  *      Valid range 1..VFD_DIGITS.
  *      If position == VFD_DIGITS + 1: The first grid will be selected.
