@@ -23,27 +23,7 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
-#include "font_custom.h"
-
-/**
- * User setup
- */
-// MCU IO: Pins, Registers, Ports
-#define VFD_CS_DDR              DDRB
-#define VFD_CS_PORT             PORTB
-#define VFD_CS_PIN              PB0
-#define VFD_SCLK_DDR            DDRB
-#define VFD_SCLK_PORT           PORTB
-#define VFD_SCLK_PIN            PB1
-#define VFD_DATA_DDR            DDRB
-#define VFD_DATA_PORT           PORTB
-#define VFD_DATA_PIN            PB2
-#define VFD_DATA_R_ONLY_PORT    PINB
-// VFD Display features
-#define VFD_DIGITS              4 // Number of grids
-#define VFD_DISPLAYABLE_DIGITS  6 // Number of characters that can be displayed simultaneously
-// Library config
-#define ENABLE_ICON_BUFFER      1 // Enable functions and extra buffer to display icons (except spinning circle)
+#include <global.h>
 
 /**
  * AVR macros
