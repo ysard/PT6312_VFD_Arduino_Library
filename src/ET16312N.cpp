@@ -97,6 +97,10 @@ void VFD_setBrightness(const uint8_t brightness){
 
 /**
  * @brief Clear the display by turning off all segments
+ *      If ENABLE_ICON_BUFFER is enabled, icons will be cleared by this function
+ *      but the buffer is preserved. i.e the icons will reappear with the next call
+ *      to VFD_writeString(), VFD_writeInt() or VFD_busySpinningCircle().
+ * @see VFD_clearIcons()
  */
 void VFD_clear(void){
     // Set addr to 1st memory cell, no CS assertion
