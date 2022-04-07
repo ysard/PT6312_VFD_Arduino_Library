@@ -141,21 +141,21 @@
  * Library handy macros
  */
 // Generic shortcuts
-#define VFD_displayOn(BRIGHTNESS)    VFD_command(PT6312_DSP_CTRL_CMD | PT6312_DSP_ON | (BRIGHTNESS & PT6312_BRT_MSK), true)
+#define VFD_displayOn(BRIGHTNESS)    VFD_setBrightness(BRIGHTNESS)
 #define VFD_displayOff()             VFD_command(PT6312_DSP_CTRL_CMD | PT6312_BRT0, true)
 #define VFD_home()                   VFD_setCursorPosition(1, false)
 
 // Shortcuts for write functions
-#define VFDWriteStringPosition(string, position) \
-    {                                            \
-        VFD_setCursorPosition(position);         \
-        VFD_writeString(string);                 \
+#define VFD_writeStringPosition(string, position) \
+    {                                             \
+        VFD_setCursorPosition(position);          \
+        VFD_writeString(string);                  \
     }
 
-#define VFDWriteIntPosition(number, digits_number, position, colon_symbol) \
-    {                                                                      \
-        VFD_setCursorPosition(position);                                   \
-        VFDWriteInt(number, digits_number, colon_symbol);                  \
+#define VFD_writeIntPosition(number, digits_number, position, colon_symbol) \
+    {                                                                       \
+        VFD_setCursorPosition(position);                                    \
+        VFD_writeInt(number, digits_number, colon_symbol);                  \
     }
 
 
