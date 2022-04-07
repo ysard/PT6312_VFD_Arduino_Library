@@ -40,13 +40,13 @@ void VFD_initialize(void){
     // Configure the controller
     VFD_resetDisplay();
 
+    cursor = 1;
+
     #if ENABLE_MENU_INTERFACE_RELATED == 1
         for(uint8_t i=0; i<VFD_DIGITS; i++){
             displaybuffer[i] = ' ';
         }
     #endif
-
-    cursor = 1;
 }
 
 /**
@@ -601,7 +601,7 @@ void VFD_segmentsGenericTest(void){
             VFD_command(lsb, false);
             VFD_command(msb, true);
 
-            _delay_ms(500);
+            _delay_ms(2000);
         }
         VFD_clear();
     }
