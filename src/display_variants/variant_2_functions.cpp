@@ -1,4 +1,28 @@
-/**
+/* Arduino Library for AD16312, HT16512, PT6312, etc. VFD Controller.
+ * Copyright (C) 2022 Ysard - <ysard@users.noreply.github.com>
+ *
+ * Based on the work of 2017 Istrate Liviu - <istrateliviu24@yahoo.com>
+ * Itself inspired by http://www.instructables.com/id/A-DVD-Player-Hack/
+ * Also inspired from https://os.mbed.com/users/wim/code/mbed_PT6312/
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/* This file is dedicated for a "1 char per grid display".
+ */
+
+ /**
  * @brief Write a string of characters present in the font
  * @param string String must be null terminated '\0'. Cursor is auto-incremented.
  *          For this display 1 grid = 1 character.

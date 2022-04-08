@@ -1,17 +1,34 @@
-#include "ET16312N.h"
+/* Arduino Library for AD16312, HT16512, PT6312, etc. VFD Controller.
+ * Copyright (C) 2022 Ysard - <ysard@users.noreply.github.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
-/**
+/* This file is dedicated for a "2 chars per grid display".
+ */
+
+ /**
  * @brief Write a string of characters present in the font
  * @param string String must be null terminated '\0'. Cursor is auto-incremented.
  *          For this display 6 characters can be displayed simultaneously.
  *          For positions 3 and 4, the grids accept 2 characters.
- *          Positions 1 and 2 accept only 1 char (segments of LSB only).
+ *          Positions 1 and 2 accept only 1 char (segments of LSB only),
+ *          the other positions are reserved for icons.
  * @param colon_symbol Boolean set to true to display the special colon symbol
  *          segment on grid 4.
  *          The symbol is displayed between chars 4 and 5.
  * @warning The string MUST be null terminated.
- * @todo TODO: fill the display buffer
- * @todo TODO: take an icon mask for every char
  */
 void VFD_writeString(const char *string, bool colon_symbol){
     uint8_t lsb_byte;
@@ -53,6 +70,7 @@ void VFD_writeString(const char *string, bool colon_symbol){
         }
 
         #if ENABLE_ICON_BUFFER == 1
+        // Merge icons and char data
         uint8_t memory_addr = (cursor * PT6312_BYTES_PER_GRID) - PT6312_BYTES_PER_GRID;
         VFD_command(lsb_byte | iconDisplayBuffer[memory_addr], false);
         VFD_command(msb_byte | iconDisplayBuffer[memory_addr + 1], false);
