@@ -54,12 +54,6 @@ void VFD_initialize(void){
     VFD_resetDisplay();
 
     cursor = 1;
-
-    #if ENABLE_MENU_INTERFACE_RELATED == 1
-        for(uint8_t i=0; i<VFD_DIGITS; i++){
-            displaybuffer[i] = ' ';
-        }
-    #endif
 }
 
 /**
@@ -123,9 +117,6 @@ void VFD_clear(void){
         // Display a segment
         VFD_command(0, false);
         VFD_command(0, false);
-        #if ENABLE_MENU_INTERFACE_RELATED == 1
-        displaybuffer[i] = ' ';
-        #endif
     }
     VFD_CSSignal();
     cursor = VFD_DIGITS;

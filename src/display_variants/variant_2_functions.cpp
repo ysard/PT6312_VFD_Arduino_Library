@@ -35,15 +35,6 @@ void VFD_writeString(const char *string, bool colon_symbol){
     uint8_t chrset;
 
     while(*string > '\0'){ // TODO: security test cursor <= VFD_DIGITS
-        #if ENABLE_MENU_INTERFACE_RELATED == 1 //TODO UPDATE
-        if(writeToLastString){
-            // Store the string to be used by the VFDBlinkUserInput function
-            if(cursor <= VFD_DIGITS && *string != ':'){
-                displaybuffer[cursor-1] = *string;
-            }
-        }
-        #endif
-
         // Send LSB
         chrset = FONT[*string - 0x20][1];
 
