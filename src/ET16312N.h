@@ -126,10 +126,10 @@
 #define VFD_home()                   VFD_setCursorPosition(1, false)
 
 // Shortcuts for write functions
-#define VFD_writeStringPosition(string, position) \
+#define VFD_writeStringPosition(string, position, colon_symbol) \
     {                                             \
         VFD_setCursorPosition(position);          \
-        VFD_writeString(string);                  \
+        VFD_writeString(string, colon_symbol);    \
     }
 
 #define VFD_writeIntPosition(number, digits_number, position, colon_symbol) \
