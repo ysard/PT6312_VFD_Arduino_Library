@@ -691,11 +691,7 @@ void VFD_command(uint8_t value, bool cmd){
  * @brief Signal the driver that the data transmission is over
  *      The CS/Strobe line is asserted to HIGH (end of transmission).
  */
-inline void VFD_CSSignal(){
-    _delay_us(1);
-    digitalWrite(VFD_CS_PORT, VFD_CS_PIN, _HIGH);
-    _delay_us(1);
-}
+extern inline void VFD_CSSignal();
 
 
 /**

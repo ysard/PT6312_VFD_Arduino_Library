@@ -192,7 +192,11 @@ void VFD_displayAllFontGlyphes(void);
  * Low level API
  */
 void VFD_command(uint8_t value, bool cmd=false);
-inline void VFD_CSSignal();
+inline void VFD_CSSignal(){
+    _delay_us(1);
+    digitalWrite(VFD_CS_PORT, VFD_CS_PIN, _HIGH);
+    _delay_us(1);
+}
 uint8_t VFD_readByte(void);
 void VFD_writeByte(uint8_t address, char data);
 
