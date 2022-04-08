@@ -159,8 +159,7 @@ void VFD_clear(void);
  * Display functions
  */
 void VFD_setCursorPosition(uint8_t position, bool cmd=false);
-void VFD_writeString(const char *string);                   // Adapted if ENABLE_ICON_BUFFER is set
-void VFD_writeString(const char *string, bool colon_symbol);// Adapted if ENABLE_ICON_BUFFER is set
+void VFD_writeString(const char *string, bool colon_symbol); // Adapted if ENABLE_ICON_BUFFER is set
 void VFD_writeInt(int32_t number, int8_t digits_number, bool colon_symbol);
 void VFD_busySpinningCircleReset(void);
 void VFD_busySpinningCircle(void); // Adapted if ENABLE_ICON_BUFFER is set

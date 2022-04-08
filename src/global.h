@@ -23,5 +23,10 @@
 // Library options
 #define ENABLE_ICON_BUFFER      0 // Enable functions and extra buffer to display icons (except spinning circle)
 
+// Fonts (files are included in ET16312N.cpp)
+// "2 chars per grid display"
+#define VFD_VARIANT_1
+// "1 char per grid display"
+#define VFD_VARIANT_2
 
 #endif // ET16312N_GLOBAL_H

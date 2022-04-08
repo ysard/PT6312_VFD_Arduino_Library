@@ -19,7 +19,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "ET16312N.h"
+
 uint8_t cursor;
+
+#if defined(VFD_VARIANT_1)
+    #include "display_variants/variant_1_font.h"
+    #include "display_variants/variant_1_functions.cpp"
+    #warning "enabled default"
+#elif defined(VFD_VARIANT_2)
+    #include "display_variants/variant_2_font.h"
+    #include "display_variants/variant_2_functions.cpp"
+    #warning "enabled variant"
+#else
+    #error "Display variant not implemented!"
+#endif
 
 
 /**
