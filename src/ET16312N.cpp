@@ -20,7 +20,7 @@
  */
 #include "ET16312N.h"
 
-uint8_t cursor;
+uint8_t grid_cursor;
 
 #if defined(VFD_VARIANT_1)
     #include "display_variants/variant_1_font.h"
@@ -53,7 +53,7 @@ void VFD_initialize(void){
     // Configure the controller
     VFD_resetDisplay();
 
-    cursor = 1;
+    grid_cursor = 1;
 }
 
 /**
@@ -119,7 +119,7 @@ void VFD_clear(void){
         VFD_command(0, false);
     }
     VFD_CSSignal();
-    cursor = VFD_DIGITS;
+    grid_cursor = VFD_DIGITS;
 }
 
 
@@ -150,7 +150,7 @@ void VFD_setCursorPosition(uint8_t position, bool cmd){
         position = VFD_DIGITS;
     }
 
-    cursor = position;
+    grid_cursor = position;
 
     // Map position to memory (x bytes per digit)
     position = (position * PT6312_BYTES_PER_GRID) - PT6312_BYTES_PER_GRID;
@@ -211,7 +211,7 @@ void VFD_writeInt(int32_t number, int8_t digits_number, bool colon_symbol){
     // WARNING: This code will cut the string from left (not from right like previous adjustments)
     // Ex: VFD_writeInt(-123456, 7, true); on a 6 digits display.
     // Will display: -23456 (The 1 is dropped here)
-    uint8_t remaining_space = VFD_DISPLAYABLE_DIGITS - cursor +1;
+    uint8_t remaining_space = VFD_DISPLAYABLE_DIGITS - grid_cursor +1;
     uint8_t size = ((length > remaining_space) ? remaining_space : length);
     char string[size + 1] = ""; // +1 for null byte
 
@@ -350,9 +350,9 @@ void VFD_busySpinningCircle(void){
         }
 
         #if ENABLE_ICON_BUFFER == 1
-        VFD_writeByte(cursor, msb | iconDisplayBuffer[cursor]);
+        VFD_writeByte(grid_cursor, msb | iconDisplayBuffer[grid_cursor]);
         #else
-        VFD_writeByte(cursor, msb); // TODO: receive specific addr to write this byte in param ?
+        VFD_writeByte(grid_cursor, msb); // TODO: receive specific addr to write this byte from param ?
         #endif
 
         // If the spinning circle was on 2 bytes, lsb and msb should be sent.
@@ -361,7 +361,7 @@ void VFD_busySpinningCircle(void){
         // VFD_command(msb, false);
         // VFD_CSSignal();
 
-        cursor++;
+        grid_cursor++;
 
         // Reset/Update display
         // => Don't know why but it appears to be mandatory to avoid forever black screen... (?)
@@ -380,8 +380,8 @@ void VFD_busySpinningCircle(void){
  *      Can be used to test keys, set leds, etc.
  */
 void VFD_scrollText(const char *string, void (pfunc)()){
-    // Save the current cursor to start the scrolling on the same position at each iteration
-    uint8_t cursor_save = cursor;
+    // Save the current grid cursor to start the scrolling on the same position at each iteration
+    uint8_t cursor_save = grid_cursor;
 
     // Find the input string length
     // Save the addr of the string
@@ -626,7 +626,7 @@ void VFD_displayAllSegments(void){
     }
     VFD_CSSignal();
 
-    cursor = VFD_DIGITS;
+    grid_cursor = VFD_DIGITS;
 
     // Reset/Update display
     // => Don't know why but it appears to be mandatory to avoid forever black screen... (?)
@@ -730,7 +730,7 @@ uint8_t VFD_readByte(void){
 void VFD_writeByte(uint8_t address, char data){
     VFD_command(PT6312_ADDR_SET_CMD | (address & PT6312_ADDR_MSK), false);
     VFD_command(data, true);
-    cursor++;
+    grid_cursor++;
 }
 
 

@@ -20,7 +20,7 @@
 
  /**
  * @brief Write a string of characters present in the font
- * @param string String must be null terminated '\0'. Cursor is auto-incremented.
+ * @param string String must be null terminated '\0'. Grid cursor is auto-incremented.
  *          For this display 6 characters can be displayed simultaneously.
  *          For positions 3 and 4, the grids accept 2 characters.
  *          Positions 1 and 2 accept only 1 char (segments of LSB only),
@@ -36,7 +36,7 @@ void VFD_writeString(const char *string, bool colon_symbol){
 
     while(*string > '\0'){ // TODO: security test cursor <= VFD_DIGITS//DISPLAYABLE
 
-        if (cursor == 3 || cursor == 4){
+        if (grid_cursor == 3 || grid_cursor == 4){
             // Cursor positions: 3 or 4: 2 chars per grid
             // MSB: Get LSB of left/1st char
             msb_byte = FONT[*string - 0x20][1];
@@ -51,7 +51,7 @@ void VFD_writeString(const char *string, bool colon_symbol){
             }
 
             // Set optional colon symbol
-            if (colon_symbol && cursor == 4){
+            if (colon_symbol && grid_cursor == 4){
                 #if VFD_COLON_SYMBOL_BIT > 8
                 // Add the symbol on the MSB part of the grid
                 msb_byte |= 1 << (VFD_COLON_SYMBOL_BIT - 9);
@@ -71,7 +71,7 @@ void VFD_writeString(const char *string, bool colon_symbol){
 
         #if ENABLE_ICON_BUFFER == 1
         // Merge icons and char data
-        uint8_t memory_addr = (cursor * PT6312_BYTES_PER_GRID) - PT6312_BYTES_PER_GRID;
+        uint8_t memory_addr = (grid_cursor * PT6312_BYTES_PER_GRID) - PT6312_BYTES_PER_GRID;
         VFD_command(lsb_byte | iconDisplayBuffer[memory_addr], false);
         VFD_command(msb_byte | iconDisplayBuffer[memory_addr + 1], false);
         #else
@@ -79,7 +79,7 @@ void VFD_writeString(const char *string, bool colon_symbol){
         VFD_command(msb_byte, false);
         #endif
 
-        cursor++;
+        grid_cursor++;
         string++;
     }
 

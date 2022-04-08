@@ -141,7 +141,8 @@
 /**
  * Global variables
  */
-extern uint8_t cursor;
+// Grid cursor (starting from 1)
+extern uint8_t grid_cursor;
 // VFD_busySpinningCircle global variables
 extern uint8_t busy_indicator_delay_count;
 extern uint8_t busy_indicator_frame;

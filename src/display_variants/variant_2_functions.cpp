@@ -24,7 +24,7 @@
 
  /**
  * @brief Write a string of characters present in the font
- * @param string String must be null terminated '\0'. Cursor is auto-incremented.
+ * @param string String must be null terminated '\0'. Grid cursor is auto-incremented.
  *          For this display 1 grid = 1 character.
  * @param colon_symbol Boolean set to true to display the special colon symbol
  *          segment on grid 3 or 5.
@@ -40,14 +40,14 @@ void VFD_writeString(const char *string, bool colon_symbol){
 
         #if VFD_COLON_SYMBOL_BIT < 9
         // Set optional colon symbol (if its bit number is < 9, starting from 1)
-        if (colon_symbol && (cursor == 3 || cursor == 5)){
+        if (colon_symbol && (grid_cursor == 3 || grid_cursor == 5)){
             // Add the symbol on the MSB part of the byte
             chrset |= 1 << (VFD_COLON_SYMBOL_BIT - 1);
         }
         #endif
 
         #if ENABLE_ICON_BUFFER == 1
-        uint8_t memory_addr = (cursor * PT6312_BYTES_PER_GRID) - PT6312_BYTES_PER_GRID;
+        uint8_t memory_addr = (grid_cursor * PT6312_BYTES_PER_GRID) - PT6312_BYTES_PER_GRID;
         VFD_command(chrset | iconDisplayBuffer[memory_addr], false);
         #else
         VFD_command(chrset, false);
@@ -58,7 +58,7 @@ void VFD_writeString(const char *string, bool colon_symbol){
 
         #if VFD_COLON_SYMBOL_BIT > 8
         // Set optional colon symbol (if its bit number is > 8, starting from 1)
-        if (colon_symbol && (cursor == 3 || cursor == 5)){
+        if (colon_symbol && (grid_cursor == 3 || grid_cursor == 5)){
             // Add the symbol on the MSB part of the byte
             chrset |= 1 << (VFD_COLON_SYMBOL_BIT - 9);
         }
@@ -70,7 +70,7 @@ void VFD_writeString(const char *string, bool colon_symbol){
         VFD_command(chrset, false);
         #endif
 
-        cursor++;
+        grid_cursor++;
         string++;
     }
 
