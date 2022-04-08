@@ -23,7 +23,7 @@
  */
 
  /**
- * @brief Write a string of characters present in the font
+ * @brief Write a string of characters present in the font (If VARIANT_2 is defined in global.h).
  * @param string String must be null terminated '\0'. Grid cursor is auto-incremented.
  *          For this display 1 grid = 1 character.
  * @param colon_symbol Boolean set to true to display the special colon symbol

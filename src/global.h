@@ -47,6 +47,6 @@
 // "2 chars per grid display"
 #define VFD_VARIANT_1
 // "1 char per grid display"
-#define VFD_VARIANT_2
+// #define VFD_VARIANT_2
 
 #endif // ET16312N_GLOBAL_H

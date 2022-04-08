@@ -22,6 +22,7 @@
 
 uint8_t grid_cursor;
 
+// Select font & functions according to global.h setting
 #if defined(VFD_VARIANT_1)
     #include "display_variants/variant_1_font.h"
     #include "display_variants/variant_1_functions.cpp"
