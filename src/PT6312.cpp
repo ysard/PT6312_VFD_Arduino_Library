@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "ET16312N.h"
+#include "PT6312.h"
 
 uint8_t grid_cursor;
 
