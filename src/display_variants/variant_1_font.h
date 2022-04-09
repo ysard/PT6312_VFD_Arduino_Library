@@ -115,6 +115,7 @@ const uint8_t FONT[65][2] = {
 #define ICON_COLON        13
 #define ICON_MP3          14
 
+// 2 sections of 4 bits in 1 byte:
 // LSB: grid number starting from 0
 // MSB: segment number starting from 0
 const uint8_t ICONS_FONT[] = {
