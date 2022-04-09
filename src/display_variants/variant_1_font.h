@@ -1,4 +1,4 @@
-/* Arduino Library for AD16312, HT16512, PT6312, etc. VFD Controller.
+/* PT6312 is an Arduino library for the PT6312 family of Vacuum Fluorescent Display controllers.
  * Copyright (C) 2022 Ysard - <ysard@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify

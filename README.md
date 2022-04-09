@@ -1,4 +1,4 @@
-PT6312 is a Arduino/AVR library for the PT6312 family of Vacuum Fluorescent Display (VFD)
+PT6312 is an Arduino/AVR library for the PT6312 family of Vacuum Fluorescent Display (VFD)
 controllers including AD16312, HT16512, ET16312 etc.
 
 It allows the full management of control boards of VFD screens extracted in particular
