@@ -124,18 +124,18 @@
 // Generic shortcuts
 #define VFD_displayOn(BRIGHTNESS)    VFD_setBrightness(BRIGHTNESS)
 #define VFD_displayOff()             VFD_command(PT6312_DSP_CTRL_CMD | PT6312_BRT0, true)
-#define VFD_home()                   VFD_setGridCursorPosition(1, false)
+#define VFD_home()                   VFD_setGridCursor(1, false)
 
 // Shortcuts for write functions
 #define VFD_writeStringPosition(string, position, colon_symbol) \
     {                                                           \
-        VFD_setGridCursorPosition(position);                    \
+        VFD_setGridCursor(position);                            \
         VFD_writeString(string, colon_symbol);                  \
     }
 
 #define VFD_writeIntPosition(number, digits_number, position, colon_symbol) \
     {                                                                       \
-        VFD_setGridCursorPosition(position);                                \
+        VFD_setGridCursor(position);                                        \
         VFD_writeInt(number, digits_number, colon_symbol);                  \
     }
 
@@ -160,7 +160,7 @@ void VFD_clear(void);
 /**
  * Display functions
  */
-void VFD_setGridCursorPosition(uint8_t position, bool cmd=false);
+void VFD_setGridCursor(uint8_t position, bool cmd=false);
 void VFD_writeString(const char *string, bool colon_symbol); // Adapted if ENABLE_ICON_BUFFER is set
 void VFD_writeInt(int32_t number, int8_t digits_number, bool colon_symbol);
 void VFD_busySpinningCircleReset(void);
