@@ -42,7 +42,7 @@ Thus a small AVR like the ATtiny85 is enough to control the display.
 
 => TODO wiring schema
 
-On the controller side (from the PT6312 datasheet):
+On the controller side (from the PT6312 datasheet (Ex: <http://www.datasheet.hk/view_download.php?id=1110296&file=0018\ad16312_161545.pdf>)):
 
 - VCC: 5V
 - VEE: 0 to VCC-30V DC*
@@ -50,7 +50,8 @@ On the controller side (from the PT6312 datasheet):
 The filament must be connected to a negative power rail: ~-1.2V DC* is acceptable.
 
 \* Negative voltages can be obtained very easily by using a very common LM2596 based
-DC-DC converter (See their datasheet).
+DC-DC converter (See `Figure 8-5. Inverting −5-V Regulator With Delayed Start-Up`
+of their datasheet here <https://www.ti.com/lit/ds/symlink/lm2596.pdf>).
 
 
 ## Configuration
@@ -150,7 +151,7 @@ The PT6311 can also manage 5 LEDs instead of 4.
 
 Except these minor differences, the protocol is exactly the same.
 Thus as it is, the library does not support this controller.
-However, it is enough to rewrite some functions to make it possible since the
+However, it is quite easy to rewrite some functions to make it possible since the
 work is already well advanced.
 
 Any contribution is welcome!
