@@ -120,7 +120,7 @@ void VFD_setBrightness(const uint8_t brightness){
  */
 void VFD_clear(void){
     // Set addr to 1st memory cell, no CS assertion
-    VFD_setCursorPosition(1, false);
+    VFD_setGridCursorPosition(1, false);
 
     for(uint8_t i=0; i<VFD_DIGITS; i++){
         // Display a segment
@@ -148,7 +148,7 @@ void VFD_clear(void){
  *      after setting the address.
  *      Default: false
  */
-void VFD_setCursorPosition(uint8_t position, bool cmd){
+void VFD_setGridCursorPosition(uint8_t position, bool cmd){
     if(position > VFD_DIGITS){
         if(position == VFD_DIGITS + 1){
             position = 1;
@@ -297,7 +297,7 @@ void VFD_scrollText(const char *string, void (pfunc)()){
         // Restore grid cursor
         // not on last iteration // todo PROPRE
         if ((left_shift + VFD_DISPLAYABLE_DIGITS -1) < size)
-            VFD_setCursorPosition(cursor_save, false);
+            VFD_setGridCursorPosition(cursor_save, false);
     }
     _delay_ms(2000);
 }
@@ -470,7 +470,7 @@ void VFD_segmentsGenericTest(void){
             }
 
             // Set grid
-            VFD_setCursorPosition(grid, false);
+            VFD_setGridCursorPosition(grid, false);
             // Set segments
             VFD_command(lsb, false);
             VFD_command(msb, true);
@@ -487,7 +487,7 @@ void VFD_segmentsGenericTest(void){
  *      It's the opposite of VFD_clear().
  */
 void VFD_displayAllSegments(void){
-    VFD_setCursorPosition(1, false);
+    VFD_setGridCursorPosition(1, false);
     for(uint8_t grid=1; grid<=VFD_DIGITS; grid++){
         // Display a segment
         VFD_command(255, false);
@@ -589,7 +589,7 @@ uint8_t VFD_readByte(void){
 
 /**
  * @brief Write a specific byte at the given address in the controller memory.
- *      This function doesn't use VFD_setCursorPosition() to map the position
+ *      This function doesn't use VFD_setGridCursorPosition() to map the position
  *      to a grid.
  * @warning Note that the CS/Strobe line is asserted to HIGH (end of transmission)
  *      after the byte has been sent.
