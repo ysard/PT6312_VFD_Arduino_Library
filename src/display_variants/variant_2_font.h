@@ -33,7 +33,7 @@
 //     ---------
 //         11
 //
-// ASCII codes
+// ASCII codes starting to 0x20 offset (space character)
 #define VFD_COLON_SYMBOL_BIT    10
 const uint8_t FONT[65][2] = {
     {0b00000000, 0b00000000}, // space 0x20
