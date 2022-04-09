@@ -41,12 +41,12 @@ uint8_t grid_cursor;
  */
 void VFD_initialize(void){
     // Configure pins
-    pinMode(VFD_CS_DDR, VFD_CS_PIN, _OUTPUT);
-    pinMode(VFD_SCLK_DDR, VFD_SCLK_PIN, _OUTPUT);
-    pinMode(VFD_DATA_DDR, VFD_DATA_PIN, _OUTPUT);
+    _pinMode(VFD_CS_DDR, VFD_CS_PIN, _OUTPUT);
+    _pinMode(VFD_SCLK_DDR, VFD_SCLK_PIN, _OUTPUT);
+    _pinMode(VFD_DATA_DDR, VFD_DATA_PIN, _OUTPUT);
 
-    digitalWrite(VFD_CS_PORT, VFD_CS_PIN, _HIGH);
-    digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _HIGH);
+    _digitalWrite(VFD_CS_PORT, VFD_CS_PIN, _HIGH);
+    _digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _HIGH);
 
     // Waiting for the VFD driver to startup
     _delay_ms(500);
@@ -355,8 +355,8 @@ uint32_t VFD_getKeys(void){
     VFD_command(PT6312_DATA_SET_CMD | PT6312_MODE_NORM | PT6312_ADDR_INC | PT6312_KEY_RD, false);
 
     // Configure DATA pin input HIGH
-    pinMode(VFD_DATA_DDR, VFD_DATA_PIN, _INPUT);
-    digitalWrite(VFD_DATA_PORT, VFD_DATA_PIN, _HIGH);
+    _pinMode(VFD_DATA_DDR, VFD_DATA_PIN, _INPUT);
+    _digitalWrite(VFD_DATA_PORT, VFD_DATA_PIN, _HIGH);
 
     // Here: CS is still LOW, SCLK is still HIGH
     _delay_us(1);
@@ -368,7 +368,7 @@ uint32_t VFD_getKeys(void){
     raw_keys = (raw_keys << 8) + (PT6312_KEY_MSK & VFD_readByte());
 
     // Restore DATA pin as OUTPUT
-    pinMode(VFD_DATA_DDR, VFD_DATA_PIN, _OUTPUT);
+    _pinMode(VFD_DATA_DDR, VFD_DATA_PIN, _OUTPUT);
 
     VFD_CSSignal();
 
@@ -416,8 +416,8 @@ uint8_t VFD_getSwitches(void){
     VFD_command(PT6312_DATA_SET_CMD | PT6312_MODE_NORM | PT6312_ADDR_INC | PT6312_SW_RD, false);
 
     // Make DATA pin input HIGH
-    pinMode(VFD_DATA_DDR, VFD_DATA_PIN, _INPUT);
-    digitalWrite(VFD_DATA_PORT, VFD_DATA_PIN, _HIGH);
+    _pinMode(VFD_DATA_DDR, VFD_DATA_PIN, _INPUT);
+    _digitalWrite(VFD_DATA_PORT, VFD_DATA_PIN, _HIGH);
 
     // Here: CS is still LOW, SCLK is still HIGH
     _delay_us(1);
@@ -425,7 +425,7 @@ uint8_t VFD_getSwitches(void){
     uint8_t raw_switches = PT6312_SW_MSK & VFD_readByte();
 
     // DATA pin as OUTPUT
-    pinMode(VFD_DATA_DDR, VFD_DATA_PIN, _OUTPUT);
+    _pinMode(VFD_DATA_DDR, VFD_DATA_PIN, _OUTPUT);
 
     VFD_CSSignal();
 
@@ -532,21 +532,21 @@ void VFD_displayAllFontGlyphes(void){
  *      Default: false
  */
 void VFD_command(uint8_t value, bool cmd){
-    digitalWrite(VFD_CS_PORT, VFD_CS_PIN, _LOW);
+    _digitalWrite(VFD_CS_PORT, VFD_CS_PIN, _LOW);
     _delay_us(1); // NOTE: not in datasheet
 
     for(uint8_t i=0; i<8; i++){
-        digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _LOW);
+        _digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _LOW);
 
         if(value & (1 << i)){
-            digitalWrite(VFD_DATA_PORT, VFD_DATA_PIN, _HIGH);
+            _digitalWrite(VFD_DATA_PORT, VFD_DATA_PIN, _HIGH);
         }else{
-            digitalWrite(VFD_DATA_PORT, VFD_DATA_PIN, _LOW);
+            _digitalWrite(VFD_DATA_PORT, VFD_DATA_PIN, _LOW);
         }
         // wait 500ns
         _delay_us(0.5);
         // Data is read at the rising edge
-        digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _HIGH);
+        _digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _HIGH);
         _delay_us(0.5);
     }
 
@@ -571,7 +571,7 @@ extern inline void VFD_CSSignal();
 uint8_t VFD_readByte(void){
     uint8_t data_in = 0xFF;
     for(uint8_t i=0; i<8; i++){
-        digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _LOW);
+        _digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _LOW);
         _delay_us(0.5);
 
         // Data is read at the falling edge
@@ -580,7 +580,7 @@ uint8_t VFD_readByte(void){
             // Bit is not set: Clear the bit
             data_in &= ~(1 << i);
 
-        digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _HIGH);
+        _digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _HIGH);
         _delay_us(0.5);
     }
     return data_in;

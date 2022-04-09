@@ -28,13 +28,14 @@
 
 /**
  * AVR macros
+ * They are all prefixed with '_' to avoid overwriting the functions/macros of the Arduino library.
  */
 #define _INPUT                          &= ~
 #define _OUTPUT                         |=
 #define _HIGH                           |=
 #define _LOW                            &= ~
-#define pinMode(DDR, PIN, MODE)         (DDR MODE (1 << PIN))
-#define digitalWrite(PORT, PIN, MODE)   (PORT MODE (1 << PIN))
+#define _pinMode(DDR, PIN, MODE)        (DDR MODE (1 << PIN))
+#define _digitalWrite(PORT, PIN, MODE)  (PORT MODE (1 << PIN))
 
 /**
  * Driver constants
@@ -196,7 +197,7 @@ void VFD_displayAllFontGlyphes(void);
 void VFD_command(uint8_t value, bool cmd=false);
 inline void VFD_CSSignal(){
     _delay_us(1);
-    digitalWrite(VFD_CS_PORT, VFD_CS_PIN, _HIGH);
+    _digitalWrite(VFD_CS_PORT, VFD_CS_PIN, _HIGH);
     _delay_us(1);
 }
 uint8_t VFD_readByte(void);
