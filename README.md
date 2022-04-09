@@ -1,11 +1,15 @@
+# PT6312 library for Arduino/AVR
+
+## Summary
+
 PT6312 is an Arduino/AVR library for the PT6312 family of Vacuum Fluorescent Display (VFD)
-controllers including AD16312, HT16512, ET16312 etc.
+controllers including for example AD16312, HT16512, ET16312.
 
 It allows the full management of control boards of VFD screens extracted in particular
 from DVD players by micro-controllers supporting the Arduino development environment.
 
 
-# Features
+## Features
 
 It supports all the grids and segments combinations of this familly of controllers:
 
@@ -25,7 +29,7 @@ Additional features:
 - Control of 4 generic switches
 
 
-# Wiring
+## Wiring
 
 Only 3 pins are required from the MCU to communicate with the VFD driver :
 CS/STB (Cable Select/Strobe), SCLK and DATA (IN/OUT).
@@ -49,9 +53,9 @@ The filament must be connected to a negative power rail: ~-1.2V DC* is acceptabl
 DC-DC converter (See their datasheet).
 
 
-# Configuration
+## Configuration
 
-## Library configuration
+### Library configuration
 
 The main options are placed in the global.h file.
 
@@ -60,7 +64,7 @@ You will find there :
 - the characteristics of the screen used (number of grids, number of displayable characters),
 - and options related to the library (scrolling speed, use of a buffer dedicated to the usage of icons that can be activated on demand to save space).
 
-## Screen configuration
+### Screen configuration
 
 The existing layouts & implementations are in the [src/display_variants/](src/display_variants/) folder.
 The selection of a configuration is done in global.h.
@@ -97,7 +101,7 @@ convert_to_bits(8, 7, 6, 4, 3, 2)
 ```
 
 
-# Functions
+## Functions
 
 
 
@@ -105,7 +109,7 @@ convert_to_bits(8, 7, 6, 4, 3, 2)
 
 
 
-# Examples
+## Examples
 
 A full clock example is available at [examples/test_attiny_vfd/test_attiny_vfd.ino](examples/test_attiny_vfd/test_attiny_vfd.ino).
 
@@ -134,9 +138,9 @@ VFD_writeInt(-123456, 6, true);
 ```
 
 
-# FAQ
+## FAQ
 
-## Does this work with other Princeton VFD controllers like the PT6311?
+### Does this work with other Princeton VFD controllers like the PT6311?
 
 This controller has more memory to address more segments per grid (20 instead of 16
 for the AD16312 controller family).
@@ -152,19 +156,19 @@ work is already well advanced.
 Any contribution is welcome!
 
 
-# Contributing
+## Contributing
 
 Any contribution is welcome!
 You can open an issue or propose a pull request.
 
 
-# PT6312 is free AND open source
+## PT6312 is free AND open source
 
 PT6312 is released under the GPL (GNU General Public License).
 You can read, test and modify its code.
 
 
-# Credits
+## Credits
 
 Thanks to Istrate Liviu for the first base of the project on his blog
 <https://www.programming-electronics-diy.xyz/2017/06/salvage-vfd-from-broken-dvd.html>.
