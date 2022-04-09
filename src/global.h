@@ -37,7 +37,7 @@
 #define VFD_DATA_PIN            PB2
 #define VFD_DATA_R_ONLY_PORT    PINB
 // VFD Display features
-#define VFD_DIGITS              4 // Number of grids
+#define VFD_GRIDS               4 // Number of grids
 #define VFD_DISPLAYABLE_DIGITS  6 // Number of characters that can be displayed simultaneously
 #define VFD_SCROLL_SPEED        500 // In milliseconds
 // Library options

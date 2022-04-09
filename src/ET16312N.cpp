@@ -65,28 +65,28 @@ void VFD_initialize(void){
  */
 void VFD_resetDisplay(void){
     // Set display mode
-    #if VFD_DIGITS == 4
+    #if VFD_GRIDS == 4
         VFD_command(PT6312_GR4_SEG16, 1);  // 4 digits, 16 segments
         #define VFD_SEGMENTS 16
-    #elif VFD_DIGITS == 5
+    #elif VFD_GRIDS == 5
         VFD_command(PT6312_GR5_SEG16, 1);  // 5 digits, 16 segments
         #define VFD_SEGMENTS 16
-    #elif VFD_DIGITS == 6
+    #elif VFD_GRIDS == 6
         VFD_command(PT6312_GR6_SEG16, 1);  // 6 digits, 16 segments
         #define VFD_SEGMENTS 16
-    #elif VFD_DIGITS == 7
+    #elif VFD_GRIDS == 7
         VFD_command(PT6312_GR7_SEG15, 1);  // 7 digits, 15 segments
         #define VFD_SEGMENTS 15
-    #elif VFD_DIGITS == 8
+    #elif VFD_GRIDS == 8
         VFD_command(PT6312_GR8_SEG14, 1);  // 8 digits, 14 segments
         #define VFD_SEGMENTS 14
-    #elif VFD_DIGITS == 9
+    #elif VFD_GRIDS == 9
         VFD_command(PT6312_GR9_SEG13, 1);  // 9 digits, 13 segments
         #define VFD_SEGMENTS 13
-    #elif VFD_DIGITS == 10
+    #elif VFD_GRIDS == 10
         VFD_command(PT6312_GR10_SEG12, 1); // 10 digits, 12 segments
         #define VFD_SEGMENTS 12
-    #elif VFD_DIGITS == 11
+    #elif VFD_GRIDS == 11
         VFD_command(PT6312_GR11_SEG11, 1); // 11 digits, 11 segments
         #define VFD_SEGMENTS 11
     #endif
@@ -122,13 +122,13 @@ void VFD_clear(void){
     // Set addr to 1st memory cell, no CS assertion
     VFD_setGridCursor(1, false);
 
-    for(uint8_t i=0; i<VFD_DIGITS; i++){
+    for(uint8_t i=0; i<VFD_GRIDS; i++){
         // Display a segment
         VFD_command(0, false);
         VFD_command(0, false);
     }
     VFD_CSSignal();
-    grid_cursor = VFD_DIGITS;
+    grid_cursor = VFD_GRIDS;
 }
 
 
@@ -140,23 +140,23 @@ void VFD_clear(void){
  *      the memory address on the controller will be 0.
  *      Position 2 relies on the 2nd grid, the address will be 2 (2 bytes further).
  * @param position Position where the next segments will be written.
- *      Valid range 1..VFD_DIGITS.
- *      If position == VFD_DIGITS + 1: The first grid will be selected.
- *      If position > VFD_DIGITS + 1 or VFD_DIGITS == 0: The last grid will be selected.
+ *      Valid range 1..VFD_GRIDS.
+ *      If position == VFD_GRIDS + 1: The first grid will be selected.
+ *      If position > VFD_GRIDS + 1 or VFD_GRIDS == 0: The last grid will be selected.
  * @param cmd (Optional) Boolean transmitted to VFD_command();
  *      If True the CS/Strobe line is asserted to HIGH (end of transmission)
  *      after setting the address.
  *      Default: false
  */
 void VFD_setGridCursor(uint8_t position, bool cmd){
-    if(position > VFD_DIGITS){
-        if(position == VFD_DIGITS + 1){
+    if(position > VFD_GRIDS){
+        if(position == VFD_GRIDS + 1){
             position = 1;
         }else{
-            position = VFD_DIGITS;
+            position = VFD_GRIDS;
         }
     }else if(position == 0){
-        position = VFD_DIGITS;
+        position = VFD_GRIDS;
     }
 
     grid_cursor = position;
@@ -457,7 +457,7 @@ void VFD_segmentsGenericTest(void){
     // lsb: segments 8-1
     uint8_t msb = 0, lsb = 0;
 
-    for(uint8_t grid=1; grid<=VFD_DIGITS; grid++){
+    for(uint8_t grid=1; grid<=VFD_GRIDS; grid++){
 
         // Note: VFD_SEGMENTS is defined in VFD_resetDisplay()
         for(uint8_t i=0; i<VFD_SEGMENTS; i++){
@@ -488,14 +488,14 @@ void VFD_segmentsGenericTest(void){
  */
 void VFD_displayAllSegments(void){
     VFD_setGridCursor(1, false);
-    for(uint8_t grid=1; grid<=VFD_DIGITS; grid++){
+    for(uint8_t grid=1; grid<=VFD_GRIDS; grid++){
         // Display a segment
         VFD_command(255, false);
         VFD_command(255, false);
     }
     VFD_CSSignal();
 
-    grid_cursor = VFD_DIGITS;
+    grid_cursor = VFD_GRIDS;
 
     // Reset/Update display
     // => Don't know why but it appears to be mandatory to avoid forever black screen... (?)

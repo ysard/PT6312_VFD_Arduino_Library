@@ -34,7 +34,7 @@ void VFD_writeString(const char *string, bool colon_symbol){
     uint8_t lsb_byte;
     uint8_t msb_byte;
 
-    while(*string > '\0'){ // TODO: security test cursor <= VFD_DIGITS//DISPLAYABLE
+    while(*string > '\0'){ // TODO: security test cursor <= VFD_GRIDS//DISPLAYABLE
 
         if (grid_cursor == 3 || grid_cursor == 4){
             // Cursor positions: 3 or 4: 2 chars per grid

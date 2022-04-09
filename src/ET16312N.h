@@ -40,7 +40,7 @@
  * Driver constants
  */
 // PT6312 Display and Keymatrix data
-#define PT6312_MAX_NR_GRIDS      VFD_DIGITS
+#define PT6312_MAX_NR_GRIDS      VFD_GRIDS
 #define PT6312_BYTES_PER_GRID    2
 // Significant bits Keymatrix data
 #define PT6312_KEY_MSK           0xFF

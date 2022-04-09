@@ -34,7 +34,7 @@
 void VFD_writeString(const char *string, bool colon_symbol){
     uint8_t chrset;
 
-    while(*string > '\0'){ // TODO: security test cursor <= VFD_DIGITS
+    while(*string > '\0'){ // TODO: security test cursor <= VFD_GRIDS
         // Send LSB
         chrset = FONT[*string - 0x20][1];
 
