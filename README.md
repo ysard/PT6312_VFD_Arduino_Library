@@ -1,5 +1,8 @@
-PT6312 is a Arduino/AVR library for the family of Vacuum Fluorescent Controller (VFD)
-including AD16312, HT16512, ET16312 etc.
+PT6312 is a Arduino/AVR library for the PT6312 family of Vacuum Fluorescent Display (VFD)
+controllers including AD16312, HT16512, ET16312 etc.
+
+It allows the full management of control boards of VFD screens extracted in particular
+from DVD players by micro-controllers supporting the Arduino development environment.
 
 
 # Features
@@ -26,20 +29,24 @@ Additional features:
 
 Only 3 pins are required from the MCU to communicate with the VFD driver :
 CS/STB (Cable Select/Strobe), SCLK and DATA (IN/OUT).
+Ex for the ATtiny85: PB0 (CS/STB), PB1 (SCLK), PB2 (DATA).
 
 The communication is based on SPI protocol, but since data transfer is never simultaneously
 in both directions, MISO and MOSI pins are often connected to each other to save a wire connection.
 
-Thus a small AVR like the ATtiny is enough to control the display.
+Thus a small AVR like the ATtiny85 is enough to control the display.
 
 => TODO wiring schema
 
-On the controller side (from the datasheet):
+On the controller side (from the PT6312 datasheet):
 
 - VCC: 5V
-- VEE: 0 to VCC-30V
+- VEE: 0 to VCC-30V DC*
 
-The filament must be connected to a negative power rail: ~-1.2V DC is acceptable.
+The filament must be connected to a negative power rail: ~-1.2V DC* is acceptable.
+
+\* Negative voltages can be obtained very easily by using a very common LM2596 based
+DC-DC converter (See their datasheet).
 
 
 # Configuration
