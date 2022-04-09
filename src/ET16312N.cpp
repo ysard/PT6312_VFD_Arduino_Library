@@ -67,20 +67,28 @@ void VFD_resetDisplay(void){
     // Set display mode
     #if VFD_DIGITS == 4
         VFD_command(PT6312_GR4_SEG16, 1);  // 4 digits, 16 segments
+        #define VFD_SEGMENTS 16
     #elif VFD_DIGITS == 5
         VFD_command(PT6312_GR5_SEG16, 1);  // 5 digits, 16 segments
+        #define VFD_SEGMENTS 16
     #elif VFD_DIGITS == 6
         VFD_command(PT6312_GR6_SEG16, 1);  // 6 digits, 16 segments
+        #define VFD_SEGMENTS 16
     #elif VFD_DIGITS == 7
         VFD_command(PT6312_GR7_SEG15, 1);  // 7 digits, 15 segments
+        #define VFD_SEGMENTS 15
     #elif VFD_DIGITS == 8
         VFD_command(PT6312_GR8_SEG14, 1);  // 8 digits, 14 segments
+        #define VFD_SEGMENTS 14
     #elif VFD_DIGITS == 9
         VFD_command(PT6312_GR9_SEG13, 1);  // 9 digits, 13 segments
+        #define VFD_SEGMENTS 13
     #elif VFD_DIGITS == 10
         VFD_command(PT6312_GR10_SEG12, 1); // 10 digits, 12 segments
+        #define VFD_SEGMENTS 12
     #elif VFD_DIGITS == 11
         VFD_command(PT6312_GR11_SEG11, 1); // 11 digits, 11 segments
+        #define VFD_SEGMENTS 11
     #endif
 
     // Turn on the display
@@ -451,7 +459,8 @@ void VFD_segmentsGenericTest(void){
 
     for(uint8_t grid=1; grid<=VFD_DIGITS; grid++){
 
-        for(uint8_t i=0; i<16; i++){
+        // Note: VFD_SEGMENTS is defined in VFD_resetDisplay()
+        for(uint8_t i=0; i<VFD_SEGMENTS; i++){
             if(i < 8){
                 lsb = 1 << i;
                 msb = 0;
