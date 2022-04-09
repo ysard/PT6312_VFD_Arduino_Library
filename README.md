@@ -22,6 +22,11 @@ It supports all the grids and segments combinations of this familly of controlle
     10 digits, 12 segments
     11 digits, 11 segments
 
+Note: The controller has a limited number of pins. Some of them have a dual role and are
+configured by the user according to the display.
+Thus, from a certain threshold the increase in the number of grids is done at the cost
+of the number of segments.
+
 Additional features:
 
 - Control of 4 LEDs
@@ -32,8 +37,8 @@ Additional features:
 ## Wiring
 
 Only 3 pins are required from the MCU to communicate with the VFD driver :
-CS/STB (Cable Select/Strobe), SCLK and DATA (IN/OUT).
-Ex for the ATtiny85: PB0 (CS/STB), PB1 (SCLK), PB2 (DATA).
+CS/STB (Cable Select/Strobe), SCLK (clock) and DATA (IN/OUT).
+Ex for the ATtiny85: Pin 5 (PB0) for CS/STB, Pin 6 (PB1) for SCLK, Pin 7 (PB2) for DATA.
 
 The communication is based on SPI protocol, but since data transfer is never simultaneously
 in both directions, MISO and MOSI pins are often connected to each other to save a wire connection.
@@ -58,17 +63,17 @@ of their datasheet here <https://www.ti.com/lit/ds/symlink/lm2596.pdf>).
 
 ### Library configuration
 
-The main options are placed in the global.h file.
+The main options are placed in the `global.h` file.
 
 You will find there :
-- the definition of the pins to use (For the ATtiny85: PB0 (CS/STB), PB1 (SCLK), PB2 (DATA)),
+- the definition of the pins to use (For the ATtiny85: Pin 5 (PB0) for CS/STB, Pin 6 (PB1) for SCLK, Pin 7 (PB2) for DATA.
 - the characteristics of the screen used (number of grids, number of displayable characters),
 - and options related to the library (scrolling speed, use of a buffer dedicated to the usage of icons that can be activated on demand to save space).
 
 ### Screen configuration
 
 The existing layouts & implementations are in the [src/display_variants/](src/display_variants/) folder.
-The selection of a configuration is done in global.h.
+The selection of a configuration is done in `global.h`.
 
 However it is unlikely that the character layout supported by your screen would be directly supported.
 
