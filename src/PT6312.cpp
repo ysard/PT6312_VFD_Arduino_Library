@@ -626,11 +626,14 @@ uint8_t VFD_readByte(void){
  *      after the byte has been sent.
  * @param address Value range 0x00..0x15 (22 addresses).
  * @param data Byte to write at the given address.
+ * @warning Since a specific address is used, the grid_cursor global variable IS NOT updated,
+ *      and is thus more synchronized with the controller memory.
+ *      You SHOULD NOT rely on this value after using this function and use
+ *      VFD_setCursorPosition().
  */
 void VFD_writeByte(uint8_t address, char data){
     VFD_command(PT6312_ADDR_SET_CMD | (address & PT6312_ADDR_MSK), false);
     VFD_command(data, true);
-    grid_cursor++;
 }
 
 
