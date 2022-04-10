@@ -304,6 +304,35 @@ void VFD_scrollText(const char *string, void (pfunc)()){
 
 
 /**
+ * @brief Wrapper to VFD_busySpinningCircle(), handle delay between frames and callback.
+ *      Delay can be adjusted by modifying the define VFD_BUSY_DELAY.
+ * @param address Address (range 0x00..0x15 (22 addresses)) or position (range 1 to number of grids)
+ *      passed to VFD_busySpinningCircle(). The use of this variable in this later function
+ *      defines its signification (memory address vs grid number).
+ * @param pfunc (Optional) Callback called at the end of each frame change.
+ *      It avoids blocking the program during the display loop.
+ *      Can be used to test keys, set leds, etc.
+ * @see VFD_busySpinningCircle()
+ */
+void VFD_busyWrapper(uint8_t address, void(pfunc)()){
+    // Reset counters of the spinning circle animation
+    uint8_t busy_indicator_frame   = 1;
+    uint8_t busy_indicator_loop_nb = 0;
+
+    for (uint16_t i=0; i<420; i++) {
+        VFD_busySpinningCircle(address, busy_indicator_frame, busy_indicator_loop_nb);
+
+        // Use callback
+        if (pfunc != nullptr) {
+            pfunc();
+        }
+        // Pause between frames
+        _delay_ms(VFD_BUSY_DELAY);
+    }
+}
+
+
+/**
  * @brief Set status of LEDs.
  *      Up to 4 LEDs can be controlled.
  * @param leds Byte where the 4 least significant bits are used.
