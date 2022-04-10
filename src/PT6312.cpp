@@ -57,6 +57,7 @@ void VFD_initialize(void){
     grid_cursor = 1;
 }
 
+
 /**
  * @brief Configure/reset the controller
  *      - Set display mode (number of digits & segments);
@@ -98,6 +99,7 @@ void VFD_resetDisplay(void){
     // Data set cmd, normal mode, auto incr, write data to memory
     VFD_command(PT6312_DATA_SET_CMD | PT6312_MODE_NORM | PT6312_ADDR_INC | PT6312_DATA_WR, true);
 }
+
 
 /**
  * @brief Set display brightness
