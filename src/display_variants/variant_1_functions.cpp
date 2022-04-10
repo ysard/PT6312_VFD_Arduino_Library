@@ -119,92 +119,92 @@ void VFD_writeString(const char *string, bool colon_symbol){
  * @see VFD_busyWrapper()
  */
 void VFD_busySpinningCircle(uint8_t address, uint8_t &frame_number, uint8_t &loop_number){
-        uint8_t msb = 0;
-        // Init duty cycles divisors
-        uint8_t seg2_duty_cycle = 2, seg3_duty_cycle = 5, seg4_duty_cycle = 12;
+    uint8_t msb = 0;
+    // Init duty cycles divisors
+    uint8_t seg2_duty_cycle = 2, seg3_duty_cycle = 5, seg4_duty_cycle = 12;
 
-        // Compute duty cycles triggers
-        seg2_duty_cycle = loop_number % seg2_duty_cycle; // 1/2
-        seg3_duty_cycle = loop_number % seg3_duty_cycle; // 1/5
-        seg4_duty_cycle = loop_number % seg4_duty_cycle; // 1/12
+    // Compute duty cycles triggers
+    seg2_duty_cycle = loop_number % seg2_duty_cycle; // 1/2
+    seg3_duty_cycle = loop_number % seg3_duty_cycle; // 1/5
+    seg4_duty_cycle = loop_number % seg4_duty_cycle; // 1/12
 
-        // Left shifts notes from segment number to bit number:
-        // msb: segment number -8 -1
-        // lsb: segment number -1
-        // Segments successively displayed with 100% of the duty cycle of 1 frame:
-        // 11, 12, 13, 14, 15, 16
-        // The 3 segments that precede the main displayed segment are fading more and more pronounced.
-        if(frame_number == 1){
-            msb = 1 << (11 - 8 - 1); // segment 11 (first)
-        }else if(frame_number == 2){
-            msb = 1 << (12 - 8 - 1); // segment 12 (second)
-            if(seg2_duty_cycle == 0){
-                msb |= 1 << (11 - 8 - 1); // segment 11
-            }
-        }else if(frame_number == 3){
-            msb = 1 << (13 - 8 - 1); // segment 13 (third)
-            if(seg2_duty_cycle == 0){
-                msb |= 1 << (12 - 8 - 1); // segment 12
-            }
-            if(seg3_duty_cycle == 0){
-                msb |= 1 << (11 - 8 - 1); // segment 11
-            }
-        }else if(frame_number == 4){
-            msb = 1 << (14 - 8 - 1); // segment 14 (fourth)
-            if(seg2_duty_cycle == 0){
-                msb |= 1 << (13 - 8 - 1); // segment 13
-            }
-            if(seg3_duty_cycle == 0){
-                msb |= 1 << (12 - 8 - 1); // segment 12
-            }
-            if(seg4_duty_cycle == 0){
-                msb |= 1 << (11 - 8 - 1); // segment 11
-            }
-        }else if(frame_number == 5){
-            msb = 1 << (15 - 8 - 1); // segment 15 (fifth)
-            if(seg2_duty_cycle == 0){
-                msb |= 1 << (14 - 8 - 1); // segment 14
-            }
-            if(seg3_duty_cycle == 0){
-                msb |= 1 << (13 - 8 - 1); // segment 13
-            }
-            if(seg4_duty_cycle == 0){
-                msb |= 1 << (12 - 8 - 1); // segment 12
-            }
-        }else if(frame_number == 6){
-            msb = 1 << (16 - 8 - 1); // segment 16 (sixth)
-            if(seg2_duty_cycle == 0){
-                msb |= 1 << (15 - 8 - 1); // segment 15
-            }
-             if(seg3_duty_cycle == 0){
-                msb |= 1 << (14 - 8 - 1); // segment 14
-            }
-            if(seg4_duty_cycle == 0){
-                msb |= 1 << (13 - 8 - 1); // segment 13
-            }
+    // Left shifts notes from segment number to bit number:
+    // msb: segment number -8 -1
+    // lsb: segment number -1
+    // Segments successively displayed with 100% of the duty cycle of 1 frame:
+    // 11, 12, 13, 14, 15, 16
+    // The 3 segments that precede the main displayed segment are fading more and more pronounced.
+    if(frame_number == 1){
+        msb = 1 << (11 - 8 - 1); // segment 11 (first)
+    }else if(frame_number == 2){
+        msb = 1 << (12 - 8 - 1); // segment 12 (second)
+        if(seg2_duty_cycle == 0){
+            msb |= 1 << (11 - 8 - 1); // segment 11
         }
-
-        loop_number++;
-        if(loop_number == 70){
-            if(frame_number == 6) frame_number = 0;
-            frame_number++;
-            loop_number = 0;
+    }else if(frame_number == 3){
+        msb = 1 << (13 - 8 - 1); // segment 13 (third)
+        if(seg2_duty_cycle == 0){
+            msb |= 1 << (12 - 8 - 1); // segment 12
         }
+        if(seg3_duty_cycle == 0){
+            msb |= 1 << (11 - 8 - 1); // segment 11
+        }
+    }else if(frame_number == 4){
+        msb = 1 << (14 - 8 - 1); // segment 14 (fourth)
+        if(seg2_duty_cycle == 0){
+            msb |= 1 << (13 - 8 - 1); // segment 13
+        }
+        if(seg3_duty_cycle == 0){
+            msb |= 1 << (12 - 8 - 1); // segment 12
+        }
+        if(seg4_duty_cycle == 0){
+            msb |= 1 << (11 - 8 - 1); // segment 11
+        }
+    }else if(frame_number == 5){
+        msb = 1 << (15 - 8 - 1); // segment 15 (fifth)
+        if(seg2_duty_cycle == 0){
+            msb |= 1 << (14 - 8 - 1); // segment 14
+        }
+        if(seg3_duty_cycle == 0){
+            msb |= 1 << (13 - 8 - 1); // segment 13
+        }
+        if(seg4_duty_cycle == 0){
+            msb |= 1 << (12 - 8 - 1); // segment 12
+        }
+    }else if(frame_number == 6){
+        msb = 1 << (16 - 8 - 1); // segment 16 (sixth)
+        if(seg2_duty_cycle == 0){
+            msb |= 1 << (15 - 8 - 1); // segment 15
+        }
+        if(seg3_duty_cycle == 0){
+            msb |= 1 << (14 - 8 - 1); // segment 14
+        }
+        if(seg4_duty_cycle == 0){
+            msb |= 1 << (13 - 8 - 1); // segment 13
+        }
+    }
 
-        #if ENABLE_ICON_BUFFER == 1
-        VFD_writeByte(address, msb | iconDisplayBuffer[address]);
-        #else
-        VFD_writeByte(address, msb); // TODO: receive specific addr to write this byte from param ?
-        #endif
+    loop_number++;
+    if(loop_number == 70){
+        if(frame_number == 6) frame_number = 0;
+        frame_number++;
+        loop_number = 0;
+    }
 
-        // If the spinning circle was on 2 bytes, lsb and msb should be sent.
-        // Ex:
-        // VFD_command(lsb, false);
-        // VFD_command(msb, false);
-        // VFD_CSSignal();
-        // grid_cursor++;
+    #if ENABLE_ICON_BUFFER == 1
+    VFD_writeByte(address, msb | iconDisplayBuffer[address]);
+    #else
+    VFD_writeByte(address, msb);
+    #endif
 
-        // Reset/Update display
-        // => Don't know why but it appears to be mandatory to avoid forever black screen... (?)
-        VFD_resetDisplay();
+    // If the spinning circle was on 2 bytes, lsb and msb should be sent.
+    // Ex:
+    // VFD_command(lsb, false);
+    // VFD_command(msb, false);
+    // VFD_CSSignal();
+    // grid_cursor++;
+
+    // Reset/Update display
+    // => Don't know why but it appears to be mandatory to avoid forever black screen... (?)
+    VFD_resetDisplay();
 }
