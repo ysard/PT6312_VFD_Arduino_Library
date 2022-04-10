@@ -145,10 +145,6 @@
  */
 // Grid cursor (starting from 1)
 extern uint8_t grid_cursor;
-// VFD_busySpinningCircle global variables
-extern uint8_t busy_indicator_delay_count;
-extern uint8_t busy_indicator_frame;
-extern uint8_t busy_indicator_loop_nb;
 
 /**
  * Generic API
@@ -164,8 +160,8 @@ void VFD_clear(void);
 void VFD_setGridCursor(uint8_t position, bool cmd=false);
 void VFD_writeString(const char *string, bool colon_symbol); // Adapted if ENABLE_ICON_BUFFER is set
 void VFD_writeInt(int32_t number, int8_t digits_number, bool colon_symbol);
-void VFD_busySpinningCircleReset(void);
-void VFD_busySpinningCircle(void); // Adapted if ENABLE_ICON_BUFFER is set
+void VFD_busySpinningCircle(uint8_t address, uint8_t &frame_number, uint8_t &loop_number); // Adapted if ENABLE_ICON_BUFFER is set
+void VFD_busyWrapper(uint8_t address, void (pfunc)()=nullptr);
 void VFD_scrollText(const char *string, void (pfunc)()=nullptr);
 
 #if ENABLE_ICON_BUFFER == 1

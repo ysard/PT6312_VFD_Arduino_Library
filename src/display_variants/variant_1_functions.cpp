@@ -88,59 +88,45 @@ void VFD_writeString(const char *string, bool colon_symbol){
 }
 
 
-// VFD_busySpinningCircle global variables
-uint8_t busy_indicator_delay_count;
-uint8_t busy_indicator_frame;
-uint8_t busy_indicator_loop_nb;
-
 /**
- * @brief Reset counters of the spinning circle animation
- * @warning Must be used before initiating an animation
- * @see VFD_busySpinningCircle()
- */
-void VFD_busySpinningCircleReset(void){
-    busy_indicator_delay_count = 0;
-    busy_indicator_frame = 1;
-    busy_indicator_loop_nb = 0;
-}
-
-/**
- * @brief Animation for a busy spinning circle.
+ * @brief Animation for a busy spinning circle that uses 1 byte (half grid).
+ * @param address Memory address on the controller where the animation frames must be set.
+ * @param frame_number Current frame to display (Value range 1..6 (6 segments));
+ *      This value is updated when the frame is modified.
+ *      The frame number goes back to 1 once 6 is exceeded.
+ * @param loop_number Number of refreshes for a frame; used to set the duty cycle of fading frames.
+ *      This value is incremented at each call.
  * @note
  *      The animation takes place on the current position set by the value of cursor.
  *      The concerned segments for this display are localized on the grid 1.
  *      The segments are: 11, 12, 13, 14, 15, 16 (it's the MSB part of the grid).
  *
- *      The loops count is stored in busy_indicator_delay_count.
- *      The screen is refreshed every 2 calls.
- *
  *      A same frame is refreshed 70 times before moving to the next.
- *      So there is a frame change every 140 calls.
- *      An entire loop is made in 840 calls (6 frames * 140 calls each).
+ *      An entire loop is made in 420 calls (6 frames * 70 calls each).
  *      It's up to you to adjust the total time of a loop to 1 second by setting up
- *      a delay (_delay_ms()) after a call (should be ~1.17ms).
- *      The number of refreshes for a frame is stored in busy_indicator_loop_nb.
+ *      a delay (VFD_BUSY_DELAY) after a call (should be ~2.35ms).
+ *      The number of refreshes for a frame is stored in loop_number.
  *
  *      A frame is composed of segments displayed at different duty cycles (1, 1/2, 1/5, 1/12)
  *      to obtain a fading effect for the segments behind the main segment.
  *      Ex: For 16th main segment:
  *          15, 14, 13 are displayed, from the most marked to the darkest;
  *          the others are not displayed (12, 11).
- *
- *
- *      The frame number is stored in busy_indicator_frame (value range 1-6 (6 segments)).
- *      The frame number goes back to 1 once 6 is exceeded.
+ * @warning Since a specific address is used, the grid_cursor global variable IS NOT updated,
+ *      and is thus more synchronized with the controller memory.
+ *      You SHOULD NOT rely on this value after using this function and use
+ *      VFD_setCursorPosition().
+ * @see VFD_busyWrapper()
  */
-void VFD_busySpinningCircle(void){
-    if(busy_indicator_delay_count == 0){
+void VFD_busySpinningCircle(uint8_t address, uint8_t &frame_number, uint8_t &loop_number){
         uint8_t msb = 0;
         // Init duty cycles divisors
         uint8_t seg2_duty_cycle = 2, seg3_duty_cycle = 5, seg4_duty_cycle = 12;
 
         // Compute duty cycles triggers
-        seg2_duty_cycle = busy_indicator_loop_nb % seg2_duty_cycle; // 1/2
-        seg3_duty_cycle = busy_indicator_loop_nb % seg3_duty_cycle; // 1/5
-        seg4_duty_cycle = busy_indicator_loop_nb % seg4_duty_cycle; // 1/12
+        seg2_duty_cycle = loop_number % seg2_duty_cycle; // 1/2
+        seg3_duty_cycle = loop_number % seg3_duty_cycle; // 1/5
+        seg4_duty_cycle = loop_number % seg4_duty_cycle; // 1/12
 
         // Left shifts notes from segment number to bit number:
         // msb: segment number -8 -1
@@ -148,14 +134,14 @@ void VFD_busySpinningCircle(void){
         // Segments successively displayed with 100% of the duty cycle of 1 frame:
         // 11, 12, 13, 14, 15, 16
         // The 3 segments that precede the main displayed segment are fading more and more pronounced.
-        if(busy_indicator_frame == 1){
+        if(frame_number == 1){
             msb = 1 << (11 - 8 - 1); // segment 11 (first)
-        }else if(busy_indicator_frame == 2){
+        }else if(frame_number == 2){
             msb = 1 << (12 - 8 - 1); // segment 12 (second)
             if(seg2_duty_cycle == 0){
                 msb |= 1 << (11 - 8 - 1); // segment 11
             }
-        }else if(busy_indicator_frame == 3){
+        }else if(frame_number == 3){
             msb = 1 << (13 - 8 - 1); // segment 13 (third)
             if(seg2_duty_cycle == 0){
                 msb |= 1 << (12 - 8 - 1); // segment 12
@@ -163,7 +149,7 @@ void VFD_busySpinningCircle(void){
             if(seg3_duty_cycle == 0){
                 msb |= 1 << (11 - 8 - 1); // segment 11
             }
-        }else if(busy_indicator_frame == 4){
+        }else if(frame_number == 4){
             msb = 1 << (14 - 8 - 1); // segment 14 (fourth)
             if(seg2_duty_cycle == 0){
                 msb |= 1 << (13 - 8 - 1); // segment 13
@@ -174,7 +160,7 @@ void VFD_busySpinningCircle(void){
             if(seg4_duty_cycle == 0){
                 msb |= 1 << (11 - 8 - 1); // segment 11
             }
-        }else if(busy_indicator_frame == 5){
+        }else if(frame_number == 5){
             msb = 1 << (15 - 8 - 1); // segment 15 (fifth)
             if(seg2_duty_cycle == 0){
                 msb |= 1 << (14 - 8 - 1); // segment 14
@@ -185,31 +171,30 @@ void VFD_busySpinningCircle(void){
             if(seg4_duty_cycle == 0){
                 msb |= 1 << (12 - 8 - 1); // segment 12
             }
-        }else if(busy_indicator_frame == 6){
+        }else if(frame_number == 6){
             msb = 1 << (16 - 8 - 1); // segment 16 (sixth)
             if(seg2_duty_cycle == 0){
-                msb |= 1 << (15 - 8 - 1); // segment 14
+                msb |= 1 << (15 - 8 - 1); // segment 15
             }
              if(seg3_duty_cycle == 0){
-                msb |= 1 << (14 - 8 - 1); // segment 15
+                msb |= 1 << (14 - 8 - 1); // segment 14
             }
             if(seg4_duty_cycle == 0){
                 msb |= 1 << (13 - 8 - 1); // segment 13
             }
         }
 
-        busy_indicator_delay_count = 2;
-        busy_indicator_loop_nb++;
-        if(busy_indicator_loop_nb == 70){
-            if(busy_indicator_frame == 6) busy_indicator_frame = 0;
-            busy_indicator_frame++;
-            busy_indicator_loop_nb = 0;
+        loop_number++;
+        if(loop_number == 70){
+            if(frame_number == 6) frame_number = 0;
+            frame_number++;
+            loop_number = 0;
         }
 
         #if ENABLE_ICON_BUFFER == 1
-        VFD_writeByte(grid_cursor, msb | iconDisplayBuffer[grid_cursor]);
+        VFD_writeByte(address, msb | iconDisplayBuffer[address]);
         #else
-        VFD_writeByte(grid_cursor, msb); // TODO: receive specific addr to write this byte from param ?
+        VFD_writeByte(address, msb); // TODO: receive specific addr to write this byte from param ?
         #endif
 
         // If the spinning circle was on 2 bytes, lsb and msb should be sent.
@@ -217,12 +202,9 @@ void VFD_busySpinningCircle(void){
         // VFD_command(lsb, false);
         // VFD_command(msb, false);
         // VFD_CSSignal();
-
-        grid_cursor++;
+        // grid_cursor++;
 
         // Reset/Update display
         // => Don't know why but it appears to be mandatory to avoid forever black screen... (?)
         VFD_resetDisplay();
-    }
-    --busy_indicator_delay_count;
 }
