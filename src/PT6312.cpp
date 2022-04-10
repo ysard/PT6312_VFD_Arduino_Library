@@ -286,7 +286,7 @@ void VFD_scrollText(const char *string, void (pfunc)()){
         if (left_shift == 0)
              _delay_ms(1000);
         else
-             _delay_ms(VFD_SCROLL_SPEED);
+             _delay_ms(VFD_SCROLL_DELAY);
 
         left_shift++;
 

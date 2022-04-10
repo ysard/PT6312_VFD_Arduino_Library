@@ -39,7 +39,8 @@
 // VFD Display features
 #define VFD_GRIDS               4 // Number of grids
 #define VFD_DISPLAYABLE_DIGITS  6 // Number of characters that can be displayed simultaneously
-#define VFD_SCROLL_SPEED        500 // In milliseconds
+#define VFD_SCROLL_DELAY        500 // In milliseconds
+#define VFD_BUSY_DELAY          2.35 // In milliseconds
 // Library options
 #define ENABLE_ICON_BUFFER      0 // Enable functions and extra buffer to display icons (except spinning circle)
 
