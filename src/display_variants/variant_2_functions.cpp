@@ -191,4 +191,8 @@ void VFD_busySpinningCircle(uint8_t position, uint8_t &frame_number, uint8_t &lo
 
     // Sync cursor
     grid_cursor++;
+
+    // Reset/Update display
+    // => Don't know why but it appears to be mandatory to avoid forever black screen... (?)
+    VFD_resetDisplay();
 }
