@@ -90,19 +90,23 @@ void setup(){
     _delay_ms(3000);
 
     // Reset the display & preserve the icons
-    VFD_clear();
+    //VFD_clear();
+
+    VFD_home();
+    VFD_scrollText("HELLO WORLD", &scrollCallback);
 }
 
 
 void loop(){
-    VFD_home();
-    VFD_scrollText("HELLO WORLD", &scrollCallback);
-
     _digitalWrite(PORTB, PB4, _HIGH);
-    updateTime();
 
+    // Display time
+    updateTime();
     VFD_home();
     VFD_writeString(currentTime, true);
+
+    // Spinning circle segments are on grid 1, MSB (address 1)
+    VFD_busyWrapper(1);
     _digitalWrite(PORTB, PB4, _LOW);
 
     // Get Keys status
