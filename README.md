@@ -1,3 +1,7 @@
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/ysard/PT6312_VFD_Arduino_Library)](https://github.com/ysard/PT6312_VFD_Arduino_Library/releases/latest/)
+[![arduino-library-badge](https://www.ardu-badge.com/badge/PT6312.svg)](https://www.ardu-badge.com/PT6312)
+![license-badge](https://img.shields.io/github/license/ysard/PT6312_VFD_Arduino_Library?color=brightgreen)
+
 # PT6312 library for Arduino/AVR
 
 ## Summary
