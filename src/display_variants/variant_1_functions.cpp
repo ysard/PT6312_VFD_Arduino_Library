@@ -18,7 +18,7 @@
 /* This file is dedicated for a "2 chars per grid display".
  */
 
- /**
+/**
  * @brief Write a string of characters present in the font (If VARIANT_1 is defined in global.h).
  * @param string String must be null terminated '\0'. Grid cursor is auto-incremented.
  *          For this display 6 characters can be displayed simultaneously.
