@@ -13,6 +13,25 @@ It allows the full management of control boards of VFD screens extracted in part
 from DVD players by micro-controllers supporting the Arduino development environment.
 
 
+## Table of contents
+
+* [Features](#features)
+* [Wiring](#wiring)
+* [Configuration](#configuration)
+    * [Library configuration](#library-configuration)
+    * [Screen configuration](#screen-configuration)
+* [Functions](#functions)
+    * [Generic](#generic)
+    * [Display variant 1: 2 chars per grid](#display-variant-1-2-chars-per-grid)
+    * [Display variant 2: 1 char per grid](#display-variant-2-1-char-per-grid)
+* [Examples](#examples)
+* [FAQ](#faq)
+    * [Does this work with other Princeton VFD controllers like the PT6311?](#does-this-work-with-other-princeton-vfd-controllers-like-the-pt6311)
+* [Contributing](#contributing)
+* [PT6312 is free AND open source](#pt6312-is-free-and-open-source)
+* [Credits](#credits)
+
+
 ## Features
 
 It supports all the grids and segments combinations of this familly of controllers:
