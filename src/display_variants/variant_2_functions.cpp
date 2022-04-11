@@ -31,16 +31,17 @@
  *          The symbol is displayed between chars 3 and 4, or 4 and 5.
  * @warning The string MUST be null terminated.
  */
-void VFD_writeString(const char *string, bool colon_symbol){
+void VFD_writeString(const char *string, bool colon_symbol)
+{
     uint8_t chrset;
 
-    while(*string > '\0'){ // TODO: security test cursor <= VFD_GRIDS
+    while (*string > '\0') { // TODO: security test cursor <= VFD_GRIDS
         // Send LSB
         chrset = FONT[*string - 0x20][1];
 
         #if VFD_COLON_SYMBOL_BIT < 9
         // Set optional colon symbol (if its bit number is < 9, starting from 1)
-        if (colon_symbol && (grid_cursor == 3 || grid_cursor == 5)){
+        if (colon_symbol && ((grid_cursor == 3) || (grid_cursor == 5))) {
             // Add the symbol on the MSB part of the byte
             chrset |= 1 << (VFD_COLON_SYMBOL_BIT - 1);
         }
@@ -58,7 +59,7 @@ void VFD_writeString(const char *string, bool colon_symbol){
 
         #if VFD_COLON_SYMBOL_BIT > 8
         // Set optional colon symbol (if its bit number is > 8, starting from 1)
-        if (colon_symbol && (grid_cursor == 3 || grid_cursor == 5)){
+        if (colon_symbol && ((grid_cursor == 3) || (grid_cursor == 5))) {
             // Add the symbol on the MSB part of the byte
             chrset |= 1 << (VFD_COLON_SYMBOL_BIT - 9);
         }
@@ -106,7 +107,8 @@ void VFD_writeString(const char *string, bool colon_symbol){
  * @note grid_cursor global variable is incremented and kept valid by ths function.
  * @see VFD_busyWrapper()
  */
-void VFD_busySpinningCircle(uint8_t position, uint8_t &frame_number, uint8_t &loop_number){
+void VFD_busySpinningCircle(uint8_t position, uint8_t& frame_number, uint8_t& loop_number)
+{
     uint8_t msb = 0, lsb = 0;
     // Init duty cycles divisors
     uint8_t seg2_duty_cycle = 2, seg3_duty_cycle = 5, seg4_duty_cycle = 12;
@@ -122,59 +124,61 @@ void VFD_busySpinningCircle(uint8_t position, uint8_t &frame_number, uint8_t &lo
     // Segments successively displayed with 100% of the duty cycle of 1 frame:
     // 4, 5, 16, 13, 12, 1
     // The 3 segments that precede the main displayed segment are fading more and more pronounced.
-    if(frame_number == 1){
-        lsb = 1 << (4 - 1); // segment 4 (first)
-    }else if(frame_number == 2){
-        lsb = 1 << (1 - 1); // segment 1 (second)
-        if(seg2_duty_cycle == 0){
-            lsb |= 1 << (4 - 1); // segment 4
+    if (frame_number == 1) {
+        lsb = 1 << (4 - 1);           // segment 4 (first)
+    }else if (frame_number == 2) {
+        lsb = 1 << (1 - 1);           // segment 1 (second)
+        if (seg2_duty_cycle == 0) {
+            lsb |= 1 << (4 - 1);      // segment 4
         }
-    }else if(frame_number == 3){
-        msb = 1 << (12 - 8 - 1); // segment 12 (third)
-        if(seg2_duty_cycle == 0){
-            lsb = 1 << (1 - 1); // segment 1
+    }else if (frame_number == 3) {
+        msb = 1 << (12 - 8 - 1);      // segment 12 (third)
+        if (seg2_duty_cycle == 0) {
+            lsb = 1 << (1 - 1);       // segment 1
         }
-        if(seg3_duty_cycle == 0){
-            lsb |= 1 << (4 - 1); // segment 4
+        if (seg3_duty_cycle == 0) {
+            lsb |= 1 << (4 - 1);      // segment 4
         }
-    }else if(frame_number == 4){
-        msb = 1 << (13 - 8 - 1); // segment 13 (fourth)
-        if(seg2_duty_cycle == 0){
+    }else if (frame_number == 4) {
+        msb = 1 << (13 - 8 - 1);      // segment 13 (fourth)
+        if (seg2_duty_cycle == 0) {
             msb |= 1 << (12 - 8 - 1); // segment 12
         }
-        if(seg3_duty_cycle == 0){
-            lsb = 1 << (1 - 1); // segment 1
+        if (seg3_duty_cycle == 0) {
+            lsb = 1 << (1 - 1);       // segment 1
         }
-        if(seg4_duty_cycle == 0){
-            lsb |= 1 << (4 - 1); // segment 4
+        if (seg4_duty_cycle == 0) {
+            lsb |= 1 << (4 - 1);      // segment 4
         }
-    }else if(frame_number == 5){
-        msb = 1 << (16 - 8 - 1); // segment 16 (fifth)
-        if(seg2_duty_cycle == 0){
+    }else if (frame_number == 5) {
+        msb = 1 << (16 - 8 - 1);      // segment 16 (fifth)
+        if (seg2_duty_cycle == 0) {
             msb |= 1 << (13 - 8 - 1); // segment 13
         }
-        if(seg3_duty_cycle == 0){
+        if (seg3_duty_cycle == 0) {
             msb |= 1 << (12 - 8 - 1); // segment 12
         }
-        if(seg4_duty_cycle == 0){
-            lsb |= 1 << (1 - 1); // segment 1
+        if (seg4_duty_cycle == 0) {
+            lsb |= 1 << (1 - 1);      // segment 1
         }
-    }else if(frame_number == 6){
-        lsb = 1 << (5 - 1); // segment 5 (sixth)
-        if(seg2_duty_cycle == 0){
+    }else if (frame_number == 6) {
+        lsb = 1 << (5 - 1);           // segment 5 (sixth)
+        if (seg2_duty_cycle == 0) {
             msb |= 1 << (16 - 8 - 1); // segment 16
         }
-        if(seg3_duty_cycle == 0){
+        if (seg3_duty_cycle == 0) {
             msb = 1 << (13 - 8 - 1); // segment 13
         }
-        if(seg4_duty_cycle == 0){
+        if (seg4_duty_cycle == 0) {
             msb |= 1 << (12 - 8 - 1); // segment 12
         }
     }
 
     loop_number++;
-    if(loop_number == 70){
-        if(frame_number == 6) frame_number = 0;
+    if (loop_number == 70) {
+        if (frame_number == 6) {
+            frame_number = 0;
+        }
         frame_number++;
         loop_number = 0;
     }

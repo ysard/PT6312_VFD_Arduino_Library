@@ -39,7 +39,8 @@ uint8_t grid_cursor;
 /**
  * @brief Configure the controller and the pins of the MCU.
  */
-void VFD_initialize(void){
+void VFD_initialize(void)
+{
     // Configure pins
     _pinMode(VFD_CS_DDR, VFD_CS_PIN, _OUTPUT);
     _pinMode(VFD_SCLK_DDR, VFD_SCLK_PIN, _OUTPUT);
@@ -90,8 +91,8 @@ void VFD_initialize(void){
  *      - Turn on the display by setting the brightness
  *      - Init default command mode (write to memory, auto increment the memory address)
  */
-void VFD_resetDisplay(void){
-
+void VFD_resetDisplay(void)
+{
     // Turn on the display
     // Display control cmd, display on/off, default brightness
     VFD_displayOn(PT6312_BRT_DEF);
@@ -106,7 +107,8 @@ void VFD_resetDisplay(void){
  * @param brightness Valid range 0..7
  *      for 1/16, 2/16, 4/16, 10/16, 11/16, 12/16, 13/16, 14/16 dutycycles.
  */
-void VFD_setBrightness(const uint8_t brightness){
+void VFD_setBrightness(const uint8_t brightness)
+{
     // Display control cmd, display on/off, brightness
     // mask invalid bits with PT6312_BRT_MSK
     VFD_command(PT6312_DSP_CTRL_CMD | PT6312_DSP_ON | (brightness & PT6312_BRT_MSK), true);
@@ -124,7 +126,8 @@ void VFD_setBrightness(const uint8_t brightness){
  *      to VFD_writeString(), VFD_writeInt() or VFD_busySpinningCircle().
  * @see VFD_clearIcons()
  */
-void VFD_clear(void){
+void VFD_clear(void)
+{
     // Set addr to 1st memory cell, no CS assertion
     VFD_setGridCursor(1, false);
 
@@ -154,14 +157,15 @@ void VFD_clear(void){
  *      after setting the address.
  *      Default: false
  */
-void VFD_setGridCursor(uint8_t position, bool cmd){
-    if(position > VFD_GRIDS){
-        if(position == VFD_GRIDS + 1){
+void VFD_setGridCursor(uint8_t position, bool cmd)
+{
+    if (position > VFD_GRIDS) {
+        if (position == VFD_GRIDS + 1) {
             position = 1;
         }else{
             position = VFD_GRIDS;
         }
-    }else if(position == 0){
+    }else if (position == 0) {
         position = VFD_GRIDS;
     }
 
@@ -187,14 +191,15 @@ void VFD_setGridCursor(uint8_t position, bool cmd){
  * @param colon_symbol Boolean set to true to display the special colon symbol
  *      segment if possible (See VFD_writeString()).
  */
-void VFD_writeInt(int32_t number, int8_t digits_number, bool colon_symbol){
+void VFD_writeInt(int32_t number, int8_t digits_number, bool colon_symbol)
+{
     int16_t number_temp = number;
-    uint8_t length = 0;
-    bool isNegative = false;
+    uint8_t length      = 0;
+    bool    isNegative  = false;
 
     // Find number of digits
     // TODO: no check of uint8 overflow here or later (by adding minus sign)
-    while(number_temp != 0){
+    while (number_temp != 0) {
         length++;
         number_temp /= 10;
     }
@@ -202,7 +207,7 @@ void VFD_writeInt(int32_t number, int8_t digits_number, bool colon_symbol){
     // Reserve 1 space for the sign
     // Note: If we don't want to count the sign in the digits_number restriction
     //  move this block after the next block of length adjustments.
-    if (number < 0){
+    if (number < 0) {
         // Switch to positive number
         number = -number;
         length++;
@@ -210,14 +215,16 @@ void VFD_writeInt(int32_t number, int8_t digits_number, bool colon_symbol){
     }
 
     // Adjust the number to digits_number param
-    if (length < digits_number)
+    if (length < digits_number) {
         // Add remaining wanted space (filled later by zeros)
         length += digits_number - length;
-    else if (length > digits_number) {
+    } else if (length > digits_number) {
         // Reduce the size of the number by discarding units
         // Ex: 100 to 1 digit: 2 divisions by 10 are made
-        for (uint8_t i=0; i<(length-digits_number); i++)
+        for (uint8_t i = 0; i < (length - digits_number); i++)
+        {
             number /= 10;
+        }
         length = digits_number;
     }
 
@@ -226,19 +233,21 @@ void VFD_writeInt(int32_t number, int8_t digits_number, bool colon_symbol){
     // WARNING: This code will cut the string from left (not from right like previous adjustments)
     // Ex: VFD_writeInt(-123456, 7, true); on a 6 digits display.
     // Will display: -23456 (The 1 is dropped here)
-    uint8_t remaining_space = VFD_DISPLAYABLE_DIGITS - grid_cursor +1;
-    uint8_t size = ((length > remaining_space) ? remaining_space : length);
-    char string[size + 1] = ""; // +1 for null byte
+    uint8_t remaining_space  = VFD_DISPLAYABLE_DIGITS - grid_cursor + 1;
+    uint8_t size             = ((length > remaining_space) ? remaining_space : length);
+    char    string[size + 1] = ""; // +1 for null byte
 
-    if (isNegative)
+    if (isNegative) {
         string[0] = '-';
+    }
 
-    for(uint8_t i=size-1; i>=(isNegative) ? 1 : 0; --i){
+    for (uint8_t i = size - 1; i >= (isNegative) ? 1 : 0; --i)
+    {
         // Convert number to ASCII value
         // PS: even if the modulo is 0, the displayed number will be 0
         // => takes care of the digits_number param.
         string[i] = (number % 10) + 0x30;
-        number /= 10;
+        number   /= 10;
     }
 
     VFD_writeString(string, colon_symbol);
@@ -253,15 +262,17 @@ void VFD_writeInt(int32_t number, int8_t digits_number, bool colon_symbol){
  *      It avoids blocking the program during the display loop.
  *      Can be used to test keys, set leds, etc.
  */
-void VFD_scrollText(const char *string, void (pfunc)()){
+void VFD_scrollText(const char *string, void(pfunc)())
+{
     // Save the current grid cursor to start the scrolling on the same position at each iteration
     uint8_t cursor_save = grid_cursor;
 
     // Find the input string length
     // Save the addr of the string
     const char *string_start_pos = string;
-    uint8_t size = 0;
-    while(*string > '\0'){
+    uint8_t    size = 0;
+
+    while (*string > '\0') {
         size++;
         string++;
     }
@@ -270,12 +281,13 @@ void VFD_scrollText(const char *string, void (pfunc)()){
 
     // Split the string into segments of the number of displayable characters,
     // then shift one letter at each iteration
-    char string_temp[VFD_DISPLAYABLE_DIGITS + 1] = "";
+    char    string_temp[VFD_DISPLAYABLE_DIGITS + 1] = "";
     uint8_t left_shift = 0;
-    while((left_shift + VFD_DISPLAYABLE_DIGITS -1) < size) {
+    while ((left_shift + VFD_DISPLAYABLE_DIGITS - 1) < size) {
         // Copy the segment from original string to a temporary string
         uint8_t temp_index = 0;
-        for(uint8_t i=left_shift; i<(left_shift + VFD_DISPLAYABLE_DIGITS); i++){
+        for (uint8_t i = left_shift; i < (left_shift + VFD_DISPLAYABLE_DIGITS); i++)
+        {
             string_temp[temp_index] = string[i];
             temp_index++;
         }
@@ -296,14 +308,15 @@ void VFD_scrollText(const char *string, void (pfunc)()){
 
         left_shift++;
 
-        if (pfunc != nullptr){
+        if (pfunc != nullptr) {
             pfunc();
         }
 
         // Restore grid cursor
         // not on last iteration // todo PROPRE
-        if ((left_shift + VFD_DISPLAYABLE_DIGITS -1) < size)
+        if ((left_shift + VFD_DISPLAYABLE_DIGITS - 1) < size) {
             VFD_setGridCursor(cursor_save, false);
+        }
     }
     _delay_ms(2000);
 }
@@ -320,12 +333,14 @@ void VFD_scrollText(const char *string, void (pfunc)()){
  *      Can be used to test keys, set leds, etc.
  * @see VFD_busySpinningCircle()
  */
-void VFD_busyWrapper(uint8_t address, void(pfunc)()){
+void VFD_busyWrapper(uint8_t address, void(pfunc)())
+{
     // Reset counters of the spinning circle animation
     uint8_t busy_indicator_frame   = 1;
     uint8_t busy_indicator_loop_nb = 0;
 
-    for (uint16_t i=0; i<420; i++) {
+    for (uint16_t i = 0; i < 420; i++)
+    {
         VFD_busySpinningCircle(address, busy_indicator_frame, busy_indicator_loop_nb);
 
         // Use callback
@@ -347,7 +362,8 @@ void VFD_busyWrapper(uint8_t address, void(pfunc)()){
  *      ...
  *      Bit 3: LED 4
  */
-void VFD_setLEDs(uint8_t leds){
+void VFD_setLEDs(uint8_t leds)
+{
     // Enable LED Read mode
     // Data set cmd, normal mode, auto incr, write data to LED port
     VFD_command(PT6312_DATA_SET_CMD | PT6312_MODE_NORM | PT6312_ADDR_INC | PT6312_LED_WR, false);
@@ -355,10 +371,12 @@ void VFD_setLEDs(uint8_t leds){
     // Invert the bits:
     // 0: LED lights
     // 1: LED turns off
-    for(uint8_t i=0; i<8; i++){
-        if((1 << i) & leds)
+    for (uint8_t i = 0; i < 8; i++)
+    {
+        if ((1 << i) & leds) {
             // Bit is set: Clear the bit
             leds &= ~(1 << i);
+        }
     }
 
     VFD_command(leds & PT6312_LED_MSK, true);
@@ -384,7 +402,8 @@ void VFD_setLEDs(uint8_t leds){
  *          Sample 5: (raw_keys >> 20) & 0x0F
  * @return 6 samples of 4 bits each in the 3 least significant bytes of a uint32_t
  */
-uint32_t VFD_getKeys(void){
+uint32_t VFD_getKeys(void)
+{
     // Enable Key Read mode
     // Data set cmd, normal mode, auto incr, read data
     VFD_command(PT6312_DATA_SET_CMD | PT6312_MODE_NORM | PT6312_ADDR_INC | PT6312_KEY_RD, false);
@@ -423,14 +442,17 @@ uint32_t VFD_getKeys(void){
  * @see VFD_getKeys()
  * @return The number of the first pressed button or 0 if no button is pressed.
  */
-uint8_t VFD_getKeyPressed(void){
+uint8_t VFD_getKeyPressed(void)
+{
     uint8_t btn_nr = 1, pressed_btn = 0;
+
     // Get 1 sample (6th sample): Last 4 bits of the uint32_t
     pressed_btn = PT6312_KEY_SMPL_MSK & PT6312_KEY_MSK & VFD_getKeys();
-    if(pressed_btn > 0){
+    if (pressed_btn > 0) {
         // Return the button number
-        while(((1 << btn_nr) & pressed_btn) == 0)
+        while (((1 << btn_nr) & pressed_btn) == 0) {
             btn_nr++;
+        }
         return btn_nr;
     }
     return 0;
@@ -445,7 +467,8 @@ uint8_t VFD_getKeyPressed(void){
  *                   |
  *                   switch 0 is pressed
  */
-uint8_t VFD_getSwitches(void){
+uint8_t VFD_getSwitches(void)
+{
     // Enable Switch Read mode
     // Data set cmd, normal mode, auto incr, read data
     VFD_command(PT6312_DATA_SET_CMD | PT6312_MODE_NORM | PT6312_ADDR_INC | PT6312_SW_RD, false);
@@ -487,16 +510,18 @@ uint8_t VFD_getSwitches(void){
  *      Then, the Most Significant Byte is received
  *      for the definition of the 8th bit to the 15th bit (16th segment).
  */
-void VFD_segmentsGenericTest(void){
+void VFD_segmentsGenericTest(void)
+{
     // msb: segments 16-9
     // lsb: segments 8-1
     uint8_t msb = 0, lsb = 0;
 
-    for(uint8_t grid=1; grid<=VFD_GRIDS; grid++){
-
+    for (uint8_t grid = 1; grid <= VFD_GRIDS; grid++)
+    {
         // Note: VFD_SEGMENTS is defined in VFD_resetDisplay()
-        for(uint8_t i=0; i<VFD_SEGMENTS; i++){
-            if(i < 8){
+        for (uint8_t i = 0; i < VFD_SEGMENTS; i++)
+        {
+            if (i < 8) {
                 lsb = 1 << i;
                 msb = 0;
             }else{
@@ -521,9 +546,11 @@ void VFD_segmentsGenericTest(void){
  * @brief Test the display of all segments of the display.
  *      It's the opposite of VFD_clear().
  */
-void VFD_displayAllSegments(void){
+void VFD_displayAllSegments(void)
+{
     VFD_setGridCursor(1, false);
-    for(uint8_t grid=1; grid<=VFD_GRIDS; grid++){
+    for (uint8_t grid = 1; grid <= VFD_GRIDS; grid++)
+    {
         // Display a segment
         VFD_command(255, false);
         VFD_command(255, false);
@@ -542,14 +569,16 @@ void VFD_displayAllSegments(void){
 /**
  * @brief Display and scroll all available characters in the current font
  */
-void VFD_displayAllFontGlyphes(void){
-    uint8_t i, j=0;
-    const uint8_t arrayLength = ((sizeof(FONT) / sizeof(uint8_t)) / 2);
-    char string[arrayLength + 1] = "";
+void VFD_displayAllFontGlyphes(void)
+{
+    uint8_t       i, j = 0;
+    const uint8_t arrayLength             = ((sizeof(FONT) / sizeof(uint8_t)) / 2);
+    char          string[arrayLength + 1] = "";
 
-    for(i=0; i<arrayLength; i++){
+    for (i = 0; i < arrayLength; i++)
+    {
         // Do not display N/A chars
-        if((FONT[i][0] | FONT[i][1]) > 0){
+        if ((FONT[i][0] | FONT[i][1]) > 0) {
             string[j] = i + 0x20;
             j++;
         }
@@ -566,14 +595,16 @@ void VFD_displayAllFontGlyphes(void){
  *      after the byte has been sent.
  *      Default: false
  */
-void VFD_command(uint8_t value, bool cmd){
+void VFD_command(uint8_t value, bool cmd)
+{
     _digitalWrite(VFD_CS_PORT, VFD_CS_PIN, _LOW);
     _delay_us(1); // NOTE: not in datasheet
 
-    for(uint8_t i=0; i<8; i++){
+    for (uint8_t i = 0; i < 8; i++)
+    {
         _digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _LOW);
 
-        if(value & (1 << i)){
+        if (value & (1 << i)) {
             _digitalWrite(VFD_DATA_PORT, VFD_DATA_PIN, _HIGH);
         }else{
             _digitalWrite(VFD_DATA_PORT, VFD_DATA_PIN, _LOW);
@@ -585,7 +616,7 @@ void VFD_command(uint8_t value, bool cmd){
         _delay_us(0.5);
     }
 
-    if(cmd) {
+    if (cmd) {
         VFD_CSSignal();
     }
 }
@@ -603,17 +634,21 @@ extern inline void VFD_CSSignal();
  * @see VFD_getSwitches(), VFD_getKeys(), VFD_getKeyPressed().
  * @return Byte of data
  */
-uint8_t VFD_readByte(void){
+uint8_t VFD_readByte(void)
+{
     uint8_t data_in = 0xFF;
-    for(uint8_t i=0; i<8; i++){
+
+    for (uint8_t i = 0; i < 8; i++)
+    {
         _digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _LOW);
         _delay_us(0.5);
 
         // Data is read at the falling edge
         // DigitalRead (read only) of VFD_DATA_PIN status
-        if(bit_is_set(VFD_DATA_R_ONLY_PORT, VFD_DATA_PIN) == 0)
+        if (bit_is_set(VFD_DATA_R_ONLY_PORT, VFD_DATA_PIN) == 0) {
             // Bit is not set: Clear the bit
             data_in &= ~(1 << i);
+        }
 
         _digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _HIGH);
         _delay_us(0.5);
@@ -635,7 +670,8 @@ uint8_t VFD_readByte(void){
  *      You SHOULD NOT rely on this value after using this function and use
  *      VFD_setCursorPosition().
  */
-void VFD_writeByte(uint8_t address, char data){
+void VFD_writeByte(uint8_t address, char data)
+{
     VFD_command(PT6312_ADDR_SET_CMD | (address & PT6312_ADDR_MSK), false);
     VFD_command(data, true);
 }
@@ -651,11 +687,12 @@ char iconDisplayBuffer[PT6312_MAX_NR_GRIDS * PT6312_BYTES_PER_GRID] = {0};
  * @param icon_font_index Index of the icon in the ICONS_FONT array.
  *      Defines can be used.
  */
-void VFD_setIcon(uint8_t icon_font_index){
+void VFD_setIcon(uint8_t icon_font_index)
+{
     // Get memory address from grid
     // Grid obtained starts from 0
     // Ex: for grid=1: (1+1)*2-2 = 2
-    uint8_t addr = convertGridToMemoryAddress(ICONS_FONT[icon_font_index] & 0x0F);
+    uint8_t addr    = convertGridToMemoryAddress(ICONS_FONT[icon_font_index] & 0x0F);
     uint8_t segment = ICONS_FONT[icon_font_index] >> 4;
 
     // Address in iconDisplayBuffer is depends on the localization of the segment
@@ -677,11 +714,12 @@ void VFD_setIcon(uint8_t icon_font_index){
  * @param icon_font_index Index of the icon in the ICONS_FONT array.
  *      Defines can be used.
  */
-void VFD_clearIcon(uint8_t icon_font_index){
+void VFD_clearIcon(uint8_t icon_font_index)
+{
     // Get memory address from grid
     // Grid obtained starts from 0
     // Ex: for grid=1: (1+1)*2-2 = 2
-    uint8_t addr = convertGridToMemoryAddress(ICONS_FONT[icon_font_index] & 0x0F);
+    uint8_t addr    = convertGridToMemoryAddress(ICONS_FONT[icon_font_index] & 0x0F);
     uint8_t segment = ICONS_FONT[icon_font_index] >> 4;
 
     // Address in iconDisplayBuffer is depends on the localization of the segment
@@ -701,8 +739,10 @@ void VFD_clearIcon(uint8_t icon_font_index){
  *      All the icons will be removed on the next call to VFD_writeString(), VFD_writeInt()
  *      or VFD_busySpinningCircle();
  */
-void VFD_clearIcons(){
-    for(uint8_t i=0; i<(PT6312_MAX_NR_GRIDS * PT6312_BYTES_PER_GRID); i++){
+void VFD_clearIcons()
+{
+    for (uint8_t i = 0; i < (PT6312_MAX_NR_GRIDS * PT6312_BYTES_PER_GRID); i++)
+    {
         iconDisplayBuffer[i] = 0;
     }
 }
@@ -714,7 +754,10 @@ void VFD_clearIcons(){
  * @return Address of the memory cell in the icon buffer
  *      (or in the memory of the controller).
  */
-inline uint8_t convertGridToMemoryAddress(uint8_t grid) {
+inline uint8_t convertGridToMemoryAddress(uint8_t grid)
+{
     return ((grid + 1) * PT6312_BYTES_PER_GRID) - PT6312_BYTES_PER_GRID;
 }
+
+
 #endif
