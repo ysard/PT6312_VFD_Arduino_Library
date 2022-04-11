@@ -124,7 +124,7 @@
  */
 // Generic shortcuts
 #define VFD_displayOn(BRIGHTNESS)    VFD_setBrightness(BRIGHTNESS)
-#define VFD_displayOff()             VFD_command(PT6312_DSP_CTRL_CMD | PT6312_BRT0, true)
+#define VFD_displayOff()             VFD_command(PT6312_DSP_CTRL_CMD | PT6312_DSP_OFF | PT6312_BRT0, true)
 #define VFD_home()                   VFD_setGridCursor(1, false)
 
 // Shortcuts for write functions
