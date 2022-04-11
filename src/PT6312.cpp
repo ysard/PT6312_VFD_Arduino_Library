@@ -110,6 +110,10 @@ void VFD_setBrightness(const uint8_t brightness){
     // Display control cmd, display on/off, brightness
     // mask invalid bits with PT6312_BRT_MSK
     VFD_command(PT6312_DSP_CTRL_CMD | PT6312_DSP_ON | (brightness & PT6312_BRT_MSK), true);
+
+    // Don't really know why, but this line (or a set mode command) is required to wake up the display
+    // Data set cmd, normal mode, auto incr, write data to memory
+    VFD_command(PT6312_DATA_SET_CMD | PT6312_MODE_NORM | PT6312_ADDR_INC | PT6312_DATA_WR, true);
 }
 
 
