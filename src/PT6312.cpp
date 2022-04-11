@@ -52,20 +52,7 @@ void VFD_initialize(void){
     _delay_ms(500);
 
     // Configure the controller
-    VFD_resetDisplay();
-
-    grid_cursor = 1;
-}
-
-
-/**
- * @brief Configure/reset the controller
- *      - Set display mode (number of digits & segments);
- *      - Turn on the display by setting the brightness
- *      - Init default command mode (write to memory, auto increment the memory address)
- */
-void VFD_resetDisplay(void){
-    // Set display mode
+    // Set display mode (number of digits & segments)
     #if VFD_GRIDS == 4
         VFD_command(PT6312_GR4_SEG16, 1);  // 4 digits, 16 segments
         #define VFD_SEGMENTS 16
@@ -91,6 +78,19 @@ void VFD_resetDisplay(void){
         VFD_command(PT6312_GR11_SEG11, 1); // 11 digits, 11 segments
         #define VFD_SEGMENTS 11
     #endif
+
+    VFD_resetDisplay();
+
+    grid_cursor = 1;
+}
+
+
+/**
+ * @brief Reset the controller
+ *      - Turn on the display by setting the brightness
+ *      - Init default command mode (write to memory, auto increment the memory address)
+ */
+void VFD_resetDisplay(void){
 
     // Turn on the display
     // Display control cmd, display on/off, default brightness
