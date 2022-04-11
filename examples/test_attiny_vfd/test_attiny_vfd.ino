@@ -85,13 +85,28 @@ void setup(){
     // VFD_setIcon(ICON_PLAY);
     // VFD_setIcon(ICON_DOLBY);
 
+    // Reset the display & preserve the icons
+    // VFD_clear();
+
     // Test all segments
     VFD_displayAllSegments();
     _delay_ms(3000);
 
-    // Reset the display & preserve the icons
-    //VFD_clear();
+    // Test dimming
+    VFD_setBrightness(1);
+    _delay_ms(1000);
+    VFD_setBrightness(2);
+    _delay_ms(1000);
+    VFD_setBrightness(3);
+    _delay_ms(1000);
+    VFD_setBrightness(4);
+    _delay_ms(1000);
+    VFD_setBrightness(5);
+    _delay_ms(1000);
+    VFD_setBrightness(7);
+    _delay_ms(1000);
 
+    // Scrolling text
     VFD_home();
     VFD_scrollText("HELLO WORLD", &scrollCallback);
 }
