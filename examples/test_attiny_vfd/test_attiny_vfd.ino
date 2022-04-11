@@ -118,7 +118,7 @@ void loop(){
     // Display time
     updateTime();
     VFD_home();
-    VFD_writeString(currentTime, true);
+    VFD_writeString(currentTime, true); // True is used to end the transmission
 
     // Spinning circle segments are on grid 1, MSB (address 1)
     VFD_busyWrapper(1);

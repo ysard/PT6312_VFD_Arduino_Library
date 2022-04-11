@@ -141,8 +141,21 @@ VFD_setIcon(ICON_DOLBY);
 // The colon symbol will be displayed if available
 VFD_home();
 VFD_writeInt(-123456, 6, true);
-```
 
+// Scrolling text
+VFD_home();
+VFD_scrollText("HELLO WORLD", &scrollCallback);
+
+// Write text
+VFD_home();
+VFD_writeString("COUCOU", true); // True is used to end the transmission
+
+// Clear the screen (keep icons)
+VFD_clear()
+
+// Enable spinning circle animation
+VFD_busyWrapper(1);
+```
 
 ## FAQ
 
