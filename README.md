@@ -391,9 +391,9 @@ VFD_scrollText("HELLO WORLD", &scrollCallback);
 
 // Write text
 VFD_home();
-VFD_writeString("COUCOU", true); // True is used to end the transmission
+VFD_writeString("COUCOU", false); // Boolean set to false to not display the special colon symbol
 
-// Clear the screen (keep icons)
+// Clear the screen (keep icons, see VFD_clearIcons() to clear them)
 VFD_clear()
 
 // Enable spinning circle animation
