@@ -68,7 +68,13 @@ in both directions, MISO and MOSI pins are often connected to each other to save
 
 Thus a small AVR like the ATtiny85 is enough to control the display.
 
-=> TODO wiring schema
+Wiring to an ATtiny85:
+
+![ATtiny85 demo](./assets/circuit_demo.svg)
+
+Wiring between IV-3A tubes and Arduino Nano:
+
+![IV-3A tube demo](./assets/IV-3A_tube_small.png)
 
 On the controller side (from the PT6312 datasheet (Ex: <http://www.datasheet.hk/view_download.php?id=1110296&file=0018\ad16312_161545.pdf>)):
 
