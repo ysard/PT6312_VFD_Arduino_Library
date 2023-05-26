@@ -16,6 +16,8 @@
  */
 #ifndef FONT_H
 #define FONT_H
+
+#include "PT6312.h"
 // Segment numbering for ET16312n VFD driver
 //         8
 //     ---------

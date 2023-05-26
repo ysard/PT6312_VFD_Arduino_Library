@@ -21,7 +21,11 @@
 
 /* This file is dedicated for a "1 char per grid display".
  */
+#include <global.h>
 
+#ifdef VFD_VARIANT_2
+
+#include "display_variants/variant_2_font.h"
 /**
  * @brief Write a string of characters present in the font (If VARIANT_2 is defined in global.h).
  * @param string String must be null terminated '\0'. Grid cursor is auto-incremented.
@@ -200,3 +204,5 @@ void VFD_busySpinningCircle(uint8_t position, uint8_t& frame_number, uint8_t& lo
     // => Don't know why but it appears to be mandatory to avoid forever black screen... (?)
     VFD_resetDisplay();
 }
+
+#endif
