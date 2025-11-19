@@ -51,3 +51,26 @@
 // #define VFD_VARIANT_2
 
 #endif // ET16312N_GLOBAL_H
+
+
+// If Teensy/ARM: override port-style defines and map macros to fast Arduino functions
+#if defined(__IMXRT1062__) || defined(ARDUINO_ARCH_MK20) || defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_ARM) || defined(__arm__)
+
+// --- Use the actual Teensy pin numbers you gave ---
+#undef VFD_CS_DDR
+#undef VFD_CS_PORT
+#undef VFD_CS_PIN
+#undef VFD_SCLK_DDR
+#undef VFD_SCLK_PORT
+#undef VFD_SCLK_PIN
+#undef VFD_DATA_DDR
+#undef VFD_DATA_PORT
+#undef VFD_DATA_PIN
+#undef VFD_DATA_R_ONLY_PORT
+
+#define VFD_CS_PIN              16u   // your CS pin
+#define VFD_SCLK_PIN            15u   // your CLK pin
+#define VFD_DATA_PIN            14u   // your DATA pin
+// for compatibility, VFD_DATA_R_ONLY_PORT will represent the read pin number
+#define VFD_DATA_R_ONLY_PORT    VFD_DATA_PIN
+#endif

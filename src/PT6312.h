@@ -24,7 +24,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <global.h>
-
+#include <Arduino.h>
 
 /**
  * AVR macros
@@ -36,6 +36,23 @@
 #define _LOW                            &= ~
 #define _pinMode(DDR, PIN, MODE)        (DDR MODE (1 << PIN))
 #define _digitalWrite(PORT, PIN, MODE)  (PORT MODE (1 << PIN))
+
+// If Teensy/ARM: override port-style defines and map macros to fast Arduino functions
+#if defined(__IMXRT1062__) || defined(ARDUINO_ARCH_MK20) || defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_ARM) || defined(__arm__)
+// Replace previous operator-style constants with simple numeric tokens
+#define _INPUT      0
+#define _OUTPUT     1
+#define _HIGH       1
+#define _LOW        0
+
+// Map existing library macros to Arduino / Teensy-fast functions
+// The macro signatures remain the same so the rest of the code needs no change.
+#define _pinMode(DDR, PIN, MODE)           pinMode((uint8_t)(PIN), ((MODE) == _OUTPUT) ? OUTPUT : INPUT)
+#define _digitalWrite(PORT, PIN, MODE)     digitalWriteFast((uint8_t)(PIN), ((MODE) == _HIGH) ? HIGH : LOW)
+// bit_is_set(PORT, PIN) used in code to read the DATA pin status — map to digitalReadFast
+#define bit_is_set(PORT, PIN)               (digitalReadFast((uint8_t)(PIN)) == HIGH)
+
+#endif // End Teensy/ARM overrides
 
 /**
  * Driver constants
@@ -198,5 +215,26 @@ inline void VFD_CSSignal(){
 }
 uint8_t VFD_readByte(void);
 void VFD_writeByte(uint8_t address, char data);
+
+inline void delay_ns(unsigned int ns) {
+
+    #if defined(CORE_TEENSY)
+        delayNanoseconds(ns);
+
+    #elif defined(__AVR__)
+        // AVR can only handle small values accurately via _delay_us
+        _delay_us(ns / 1000.0);
+
+    #else
+        // crude fallback: 1 nop ≈ 1 cycle
+        unsigned int cycles = ns / (1000000000UL / F_CPU);
+        if (cycles < 1) cycles = 1;
+        for (volatile unsigned int i = 0; i < cycles; i++) {
+            __asm__ __volatile__("nop");
+        }
+
+    #endif
+
+}
 
 #endif

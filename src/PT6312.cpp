@@ -369,13 +369,7 @@ void VFD_setLEDs(uint8_t leds)
     // Invert the bits:
     // 0: LED lights
     // 1: LED turns off
-    for (uint8_t i = 0; i < 8; i++)
-    {
-        if ((1 << i) & leds) {
-            // Bit is set: Clear the bit
-            leds &= ~(1 << i);
-        }
-    }
+    leds ^= 0xFF;
 
     VFD_command(leds & PT6312_LED_MSK, true);
 
@@ -608,10 +602,10 @@ void VFD_command(uint8_t value, bool cmd)
             _digitalWrite(VFD_DATA_PORT, VFD_DATA_PIN, _LOW);
         }
         // wait 500ns
-        _delay_us(0.5);
+        delay_ns(500);
         // Data is read at the rising edge
         _digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _HIGH);
-        _delay_us(0.5);
+        delay_ns(500);
     }
 
     if (cmd) {
@@ -639,7 +633,7 @@ uint8_t VFD_readByte(void)
     for (uint8_t i = 0; i < 8; i++)
     {
         _digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _LOW);
-        _delay_us(0.5);
+        delay_ns(500);
 
         // Data is read at the falling edge
         // DigitalRead (read only) of VFD_DATA_PIN status
@@ -649,7 +643,7 @@ uint8_t VFD_readByte(void)
         }
 
         _digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _HIGH);
-        _delay_us(0.5);
+        delay_ns(500);
     }
     return data_in;
 }
