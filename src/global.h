@@ -56,14 +56,10 @@
     // On Teensy, we no longer use AVR registers; instead, we use pin numbers directly
     // #define VFD_CS_DDR
     // #define VFD_CS_PORT
-    // #define VFD_CS_PIN
     // #define VFD_SCLK_DDR
     // #define VFD_SCLK_PORT
-    // #define VFD_SCLK_PIN
     // #define VFD_DATA_DDR
     // #define VFD_DATA_PORT
-    // #define VFD_DATA_PIN
-    // #define VFD_DATA_R_ONLY_PORT
 
     #define VFD_CS_PIN              16u   // your CS pin
     #define VFD_SCLK_PIN            15u   // your CLK pin
