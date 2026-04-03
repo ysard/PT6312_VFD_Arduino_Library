@@ -12,6 +12,9 @@ controllers including for example AD16312, HT16512, ET16312.
 It allows the full management of control boards of VFD screens extracted in particular
 from DVD players by micro-controllers supporting the Arduino development environment.
 
+For a write-up about VFDs (overview, connection, power supply, control), you can consult 
+a series of blog articles (in French) 
+[here](https://pro-domo.ddns.net/blog/afficheurs-fluorescents-vfd-theorie-partie-1.html).
 
 ## Table of contents
 
