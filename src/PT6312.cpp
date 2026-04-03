@@ -669,6 +669,16 @@ void VFD_writeByte(uint8_t address, char data)
 }
 
 
+/**
+ * @brief Abstract the nanosecond delays for bitbang operations.
+ *      Uses `delayNanoseconds` on Teensy and the original implementation on AVR
+ *      based on `_delay_us`.
+ * @warning Be careful to not use runtime variables here, except on Teensy,
+ *      because of the cost of the division operation required to convert ns to us.
+ */
+extern inline void delay_ns(unsigned int ns);
+
+
 #if ENABLE_ICON_BUFFER == 1
 char iconDisplayBuffer[PT6312_MAX_NR_GRIDS * PT6312_BYTES_PER_GRID] = {0};
 
