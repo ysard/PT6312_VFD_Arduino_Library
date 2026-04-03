@@ -24,18 +24,41 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <global.h>
-
+#include <Arduino.h>
 
 /**
- * AVR macros
+ * AVR & Teensy macros
  * They are all prefixed with '_' to avoid overwriting the functions/macros of the Arduino library.
  */
-#define _INPUT                          &= ~
-#define _OUTPUT                         |=
-#define _HIGH                           |=
-#define _LOW                            &= ~
-#define _pinMode(DDR, PIN, MODE)        (DDR MODE (1 << PIN))
-#define _digitalWrite(PORT, PIN, MODE)  (PORT MODE (1 << PIN))
+#if defined(__AVR__)
+
+    // AVR macros
+    #define _INPUT                          &= ~
+    #define _OUTPUT                         |=
+    #define _HIGH                           |=
+    #define _LOW                            &= ~
+    #define _pinMode(DDR, PIN, MODE)        (DDR MODE (1 << PIN))
+    #define _digitalWrite(PORT, PIN, MODE)  (PORT MODE (1 << PIN))
+
+#elif defined(__IMXRT1062__) || defined(ARDUINO_ARCH_MK20) || defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_ARM) || defined(__arm__)
+
+    // If Teensy/ARM: override port-style defines and map macros to fast Arduino functions
+    // Replace previous operator-style constants with simple numeric tokens
+    #define _INPUT                          0
+    #define _OUTPUT                         1
+    #define _HIGH                           1
+    #define _LOW                            0
+
+    // Map existing library macros to Arduino / Teensy-fast functions
+    // The macro signatures remain the same so the rest of the code needs no change.
+    #define _pinMode(DDR, PIN, MODE)        pinMode((uint8_t)(PIN), ((MODE) == _OUTPUT) ? OUTPUT : INPUT)
+    #define _digitalWrite(PORT, PIN, MODE)  digitalWriteFast((uint8_t)(PIN), ((MODE) == _HIGH) ? HIGH : LOW)
+    // bit_is_set(PORT, PIN) used in code to read the DATA pin status — map to digitalReadFast
+    #define bit_is_set(PORT, PIN)           (digitalReadFast((uint8_t)(PIN)) == HIGH)
+
+#else // End AVR/Teensy/ARM overrides
+    #error Unsupported platform
+#endif
 
 /**
  * Driver constants
@@ -191,12 +214,34 @@ void VFD_displayAllFontGlyphes(void);
  * Low level API
  */
 void VFD_command(uint8_t value, bool cmd=false);
-inline void VFD_CSSignal(){
+// See doc in source.
+static inline void VFD_CSSignal(void)
+{
     _delay_us(1);
     _digitalWrite(VFD_CS_PORT, VFD_CS_PIN, _HIGH);
     _delay_us(1);
 }
 uint8_t VFD_readByte(void);
 void VFD_writeByte(uint8_t address, char data);
+// See doc in source.
+static inline void delay_ns(unsigned int ns)
+{
+    #if defined(CORE_TEENSY)
+        delayNanoseconds(ns);
 
-#endif
+    #elif defined(__AVR__)
+        // AVR can only handle small values accurately via _delay_us
+        _delay_us(ns / 1000.0);
+
+    #else
+        // crude fallback: 1 nop ≈ 1 cycle
+        unsigned int cycles = ns / (1000000000UL / F_CPU);
+        if (cycles < 1) cycles = 1;
+        for (volatile unsigned int i = 0; i < cycles; i++) {
+            __asm__ __volatile__("nop");
+        }
+
+    #endif
+}
+
+#endif // ET16312N_H

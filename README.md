@@ -2,7 +2,7 @@
 [![arduino-library-badge](https://www.ardu-badge.com/badge/PT6312.svg)](https://www.ardu-badge.com/PT6312)
 ![license-badge](https://img.shields.io/github/license/ysard/PT6312_VFD_Arduino_Library?color=brightgreen)
 
-# PT6312 library for Arduino/AVR
+# PT6312 library for Arduino/AVR/Teensy
 
 ## Summary
 
@@ -446,3 +446,5 @@ Thanks to Istrate Liviu for the first base of the project on his blog
 
 Also thanks to the website <https://os.mbed.com/users/wim/notebook/vacuum-fluorescent-display-vfd-drivers/>
 for their precious information.
+
+Thanks to @eraxeg for the support of Teensy/ARM platforms.

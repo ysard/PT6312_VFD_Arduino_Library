@@ -25,17 +25,6 @@
 /**
  * User setup
  */
-// MCU IO: Pins, Registers, Ports
-#define VFD_CS_DDR              DDRB
-#define VFD_CS_PORT             PORTB
-#define VFD_CS_PIN              PB0
-#define VFD_SCLK_DDR            DDRB
-#define VFD_SCLK_PORT           PORTB
-#define VFD_SCLK_PIN            PB1
-#define VFD_DATA_DDR            DDRB
-#define VFD_DATA_PORT           PORTB
-#define VFD_DATA_PIN            PB2
-#define VFD_DATA_R_ONLY_PORT    PINB
 // VFD Display features
 #define VFD_GRIDS               4 // Number of grids
 #define VFD_DISPLAYABLE_DIGITS  6 // Number of characters that can be displayed simultaneously
@@ -43,11 +32,44 @@
 #define VFD_BUSY_DELAY          2.35 // In milliseconds
 // Library options
 #define ENABLE_ICON_BUFFER      0 // Enable functions and extra buffer to display icons (except spinning circle)
-
 // Fonts (files are included in ET16312N.cpp)
 // "2 chars per grid display"
 #define VFD_VARIANT_1
 // "1 char per grid display"
 // #define VFD_VARIANT_2
+
+
+// MCU IO: Pins, Registers, Ports
+#if defined(__AVR__)
+    #define VFD_CS_DDR              DDRB
+    #define VFD_CS_PORT             PORTB
+    #define VFD_CS_PIN              PB0
+    #define VFD_SCLK_DDR            DDRB
+    #define VFD_SCLK_PORT           PORTB
+    #define VFD_SCLK_PIN            PB1
+    #define VFD_DATA_DDR            DDRB
+    #define VFD_DATA_PORT           PORTB
+    #define VFD_DATA_PIN            PB2
+    #define VFD_DATA_R_ONLY_PORT    PINB
+
+#elif defined(__IMXRT1062__) || defined(ARDUINO_ARCH_MK20) || defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_ARM) || defined(__arm__)
+    // On Teensy, we no longer use AVR registers; instead, we use pin numbers directly
+    // #define VFD_CS_DDR
+    // #define VFD_CS_PORT
+    // #define VFD_SCLK_DDR
+    // #define VFD_SCLK_PORT
+    // #define VFD_DATA_DDR
+    // #define VFD_DATA_PORT
+
+    #define VFD_CS_PIN              16u   // your CS pin
+    #define VFD_SCLK_PIN            15u   // your CLK pin
+    #define VFD_DATA_PIN            14u   // your DATA pin
+    // for compatibility, VFD_DATA_R_ONLY_PORT will represent the read pin number
+    #define VFD_DATA_R_ONLY_PORT    VFD_DATA_PIN
+
+#else
+    #error Unsupported platform
+
+#endif
 
 #endif // ET16312N_GLOBAL_H

@@ -602,10 +602,10 @@ void VFD_command(uint8_t value, bool cmd)
             _digitalWrite(VFD_DATA_PORT, VFD_DATA_PIN, _LOW);
         }
         // wait 500ns
-        _delay_us(0.5);
+        delay_ns(500);
         // Data is read at the rising edge
         _digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _HIGH);
-        _delay_us(0.5);
+        delay_ns(500);
     }
 
     if (cmd) {
@@ -618,7 +618,7 @@ void VFD_command(uint8_t value, bool cmd)
  * @brief Signal the driver that the data transmission is over
  *      The CS/Strobe line is asserted to HIGH (end of transmission).
  */
-extern inline void VFD_CSSignal();
+extern inline void VFD_CSSignal(void);
 
 
 /**
@@ -633,7 +633,7 @@ uint8_t VFD_readByte(void)
     for (uint8_t i = 0; i < 8; i++)
     {
         _digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _LOW);
-        _delay_us(0.5);
+        delay_ns(500);
 
         // Data is read at the falling edge
         // DigitalRead (read only) of VFD_DATA_PIN status
@@ -643,7 +643,7 @@ uint8_t VFD_readByte(void)
         }
 
         _digitalWrite(VFD_SCLK_PORT, VFD_SCLK_PIN, _HIGH);
-        _delay_us(0.5);
+        delay_ns(500);
     }
     return data_in;
 }
@@ -667,6 +667,16 @@ void VFD_writeByte(uint8_t address, char data)
     VFD_command(PT6312_ADDR_SET_CMD | (address & PT6312_ADDR_MSK), false);
     VFD_command(data, true);
 }
+
+
+/**
+ * @brief Abstract the nanosecond delays for bitbang operations.
+ *      Uses `delayNanoseconds` on Teensy and the original implementation on AVR
+ *      based on `_delay_us`.
+ * @warning Be careful to not use runtime variables here, except on Teensy,
+ *      because of the cost of the division operation required to convert ns to us.
+ */
+extern inline void delay_ns(unsigned int ns);
 
 
 #if ENABLE_ICON_BUFFER == 1
