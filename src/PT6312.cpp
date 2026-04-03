@@ -369,13 +369,7 @@ void VFD_setLEDs(uint8_t leds)
     // Invert the bits:
     // 0: LED lights
     // 1: LED turns off
-    for (uint8_t i = 0; i < 8; i++)
-    {
-        if ((1 << i) & leds) {
-            // Bit is set: Clear the bit
-            leds &= ~(1 << i);
-        }
-    }
+    leds ^= 0xFF;
 
     VFD_command(leds & PT6312_LED_MSK, true);
 
