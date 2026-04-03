@@ -41,7 +41,6 @@
 
 // MCU IO: Pins, Registers, Ports
 #if defined(__AVR__)
-    // MCU IO: Pins, Registers, Ports
     #define VFD_CS_DDR              DDRB
     #define VFD_CS_PORT             PORTB
     #define VFD_CS_PIN              PB0
