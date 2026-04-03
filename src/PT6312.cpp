@@ -25,10 +25,10 @@ uint8_t grid_cursor;
 // Select font & functions according to global.h setting
 #if defined(VFD_VARIANT_1)
     #include "display_variants/variant_1_font.h"
-    #warning "enabled default VFD config"
+    #pragma message("enabled default VFD config")
 #elif defined(VFD_VARIANT_2)
     #include "display_variants/variant_2_font.h"
-    #warning "enabled variant VFD config"
+    #pragma message("enabled variant VFD config")
 #else
     #error "Display variant not implemented!"
 #endif
