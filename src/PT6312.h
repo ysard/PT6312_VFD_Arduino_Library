@@ -208,7 +208,7 @@ void VFD_displayAllFontGlyphes(void);
  * Low level API
  */
 void VFD_command(uint8_t value, bool cmd=false);
-inline void VFD_CSSignal(){
+static inline void VFD_CSSignal(void){
     _delay_us(1);
     _digitalWrite(VFD_CS_PORT, VFD_CS_PIN, _HIGH);
     _delay_us(1);
@@ -216,7 +216,7 @@ inline void VFD_CSSignal(){
 uint8_t VFD_readByte(void);
 void VFD_writeByte(uint8_t address, char data);
 
-inline void delay_ns(unsigned int ns) {
+static inline void delay_ns(unsigned int ns) {
 
     #if defined(CORE_TEENSY)
         delayNanoseconds(ns);
@@ -234,7 +234,6 @@ inline void delay_ns(unsigned int ns) {
         }
 
     #endif
-
 }
 
 #endif
