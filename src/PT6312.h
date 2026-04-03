@@ -27,32 +27,38 @@
 #include <Arduino.h>
 
 /**
- * AVR macros
+ * AVR & Teensy macros
  * They are all prefixed with '_' to avoid overwriting the functions/macros of the Arduino library.
  */
-#define _INPUT                          &= ~
-#define _OUTPUT                         |=
-#define _HIGH                           |=
-#define _LOW                            &= ~
-#define _pinMode(DDR, PIN, MODE)        (DDR MODE (1 << PIN))
-#define _digitalWrite(PORT, PIN, MODE)  (PORT MODE (1 << PIN))
+#if defined(__AVR__)
 
-// If Teensy/ARM: override port-style defines and map macros to fast Arduino functions
-#if defined(__IMXRT1062__) || defined(ARDUINO_ARCH_MK20) || defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_ARM) || defined(__arm__)
-// Replace previous operator-style constants with simple numeric tokens
-#define _INPUT      0
-#define _OUTPUT     1
-#define _HIGH       1
-#define _LOW        0
+    // AVR macros
+    #define _INPUT                          &= ~
+    #define _OUTPUT                         |=
+    #define _HIGH                           |=
+    #define _LOW                            &= ~
+    #define _pinMode(DDR, PIN, MODE)        (DDR MODE (1 << PIN))
+    #define _digitalWrite(PORT, PIN, MODE)  (PORT MODE (1 << PIN))
 
-// Map existing library macros to Arduino / Teensy-fast functions
-// The macro signatures remain the same so the rest of the code needs no change.
-#define _pinMode(DDR, PIN, MODE)           pinMode((uint8_t)(PIN), ((MODE) == _OUTPUT) ? OUTPUT : INPUT)
-#define _digitalWrite(PORT, PIN, MODE)     digitalWriteFast((uint8_t)(PIN), ((MODE) == _HIGH) ? HIGH : LOW)
-// bit_is_set(PORT, PIN) used in code to read the DATA pin status — map to digitalReadFast
-#define bit_is_set(PORT, PIN)               (digitalReadFast((uint8_t)(PIN)) == HIGH)
+#elif defined(__IMXRT1062__) || defined(ARDUINO_ARCH_MK20) || defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_ARM) || defined(__arm__)
 
-#endif // End Teensy/ARM overrides
+    // If Teensy/ARM: override port-style defines and map macros to fast Arduino functions
+    // Replace previous operator-style constants with simple numeric tokens
+    #define _INPUT                          0
+    #define _OUTPUT                         1
+    #define _HIGH                           1
+    #define _LOW                            0
+
+    // Map existing library macros to Arduino / Teensy-fast functions
+    // The macro signatures remain the same so the rest of the code needs no change.
+    #define _pinMode(DDR, PIN, MODE)        pinMode((uint8_t)(PIN), ((MODE) == _OUTPUT) ? OUTPUT : INPUT)
+    #define _digitalWrite(PORT, PIN, MODE)  digitalWriteFast((uint8_t)(PIN), ((MODE) == _HIGH) ? HIGH : LOW)
+    // bit_is_set(PORT, PIN) used in code to read the DATA pin status — map to digitalReadFast
+    #define bit_is_set(PORT, PIN)           (digitalReadFast((uint8_t)(PIN)) == HIGH)
+
+#else // End AVR/Teensy/ARM overrides
+    #error Unsupported platform
+#endif
 
 /**
  * Driver constants
@@ -238,4 +244,4 @@ static inline void delay_ns(unsigned int ns)
     #endif
 }
 
-#endif
+#endif // ET16312N_H
